@@ -12,18 +12,18 @@ public class Filme implements Serializable{
 	private Date data_lancamento;
 	private String descricao;
 	private int duracao;
-	private Set<Ator> atores;
-	private Set<Diretor> diretores;
+	private List<Ator> atores;
+	private List<Diretor> diretores;
 	private Genero genero;
-	private Set<Horario> horarios;
+	private List<Horario> horarios;
 	
 	public Filme() {
-		this.atores =  new HashSet<Ator>();
-		this.diretores = new HashSet<Diretor>();
-		this.horarios = new HashSet<Horario>();
+		this.atores =  new ArrayList<Ator>();
+		this.diretores = new ArrayList<Diretor>();
+		this.horarios = new ArrayList<Horario>();
 	}
 	
-	public Filme(String nome, Date data, String desc, int duracao, Set<Ator> atores, Set<Diretor> diretores, Set<Horario> horarios, Genero genero) {
+	public Filme(String nome, Date data, String desc, int duracao, List<Ator> atores, List<Diretor> diretores, List<Horario> horarios, Genero genero) {
 		this();
 		this.nome = nome;
 		this.data_lancamento = data;

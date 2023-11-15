@@ -1,6 +1,8 @@
 package br.ucs.poo.infra;
 
-public class Genero {
+import java.io.Serializable;
+
+public class Genero implements Serializable{
 	private String nome;
 
 	public String getNome() {

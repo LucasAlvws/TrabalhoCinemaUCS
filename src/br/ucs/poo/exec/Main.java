@@ -10,14 +10,16 @@ public class Main {
 	private Cinema cinema;
 	
 	public Main() {
-		this.cinema = new Cinema("UCS", "R. Francisco Getúlio Vargas, 1130 - Petrópolis");
+		this.cinema = new Cinema();
 		try {
 			cinema = DataManager.carregarDados("src/br/ucs/poo/data/cinema.bin");
 		} catch (Exception e) {
+			this.cinema.setEndereco( "R. Francisco Getúlio Vargas, 1130 - Petrópolis");
+			this.cinema.setNome("UCS");
 			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
 		}
 	}
-	
+																																																													
 	public static void main(String[] args) {
 		Main menu = new Main();
 		menu.run();
@@ -104,7 +106,7 @@ public class Main {
 			if(classe.equals("Gêneros")) {
 				switch (opcaoCrud) {
 				case 1:
-					addGenero();
+					addGenero(cmd);
 					break;
 				case 2:
 					listarGenero();
@@ -213,11 +215,18 @@ public class Main {
 		
 	}
 
-	public void addGenero() {
+	public void addGenero(Scanner cmd) {
+		String opcao;
+		System.out.println("Add Gêneros:");
+		System.out.println("Digite o nome do gênero: ");
+		opcao = cmd.nextLine();
+		this.cinema.setGeneros(opcao);
+		DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
 		
 	}
 	public void listarGenero() {
-		
+		System.out.println("Lista de Gêneros");
+		System.out.println(this.cinema.listarGeneros());
 	}
 	public void modificaGenero() {
 		
