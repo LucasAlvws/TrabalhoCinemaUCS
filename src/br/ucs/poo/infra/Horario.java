@@ -1,7 +1,8 @@
 package br.ucs.poo.infra;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Horario {
+public class Horario implements Serializable{
 	private Date data;
 	/*horario*/
 	private Sala sala;

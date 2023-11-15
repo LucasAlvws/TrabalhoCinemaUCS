@@ -1,5 +1,7 @@
 package br.ucs.poo.infra;
 
-public class Assento {
+import java.io.Serializable;
+
+public class Assento implements Serializable{
 
 }

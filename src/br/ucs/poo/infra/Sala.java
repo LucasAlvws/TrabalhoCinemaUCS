@@ -1,6 +1,8 @@
 package br.ucs.poo.infra;
 
-public class Sala {
+import java.io.Serializable;
+
+public class Sala implements Serializable{
 	private int numero;
 
 	public int getNumero() {

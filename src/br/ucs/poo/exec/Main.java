@@ -2,6 +2,7 @@ package br.ucs.poo.exec;
 
 import java.util.Scanner;
 
+import br.ucs.poo.data.DataManager;
 import br.ucs.poo.infra.Cinema;
 
 public class Main {
@@ -10,6 +11,11 @@ public class Main {
 	
 	public Main() {
 		this.cinema = new Cinema("UCS", "R. Francisco Getúlio Vargas, 1130 - Petrópolis");
+		try {
+			cinema = DataManager.carregarDados("src/br/ucs/poo/data/cinema.bin");
+		} catch (Exception e) {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		}
 	}
 	
 	public static void main(String[] args) {

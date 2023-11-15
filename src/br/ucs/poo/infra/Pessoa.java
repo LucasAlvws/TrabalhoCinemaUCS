@@ -1,6 +1,8 @@
 package br.ucs.poo.infra;
 
-public abstract class Pessoa {
+import java.io.Serializable;
+
+public abstract class Pessoa implements Serializable{
 	private String nome;
 	private String paisOrigem;
 	private Pessoa conjuge;

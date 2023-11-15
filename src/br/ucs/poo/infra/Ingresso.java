@@ -1,8 +1,9 @@
 package br.ucs.poo.infra;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Ingresso {
+public class Ingresso implements Serializable{
 	private String nomeComprador;
 	private Date data;
 	private String celular;

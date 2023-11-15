@@ -1,8 +1,9 @@
 package br.ucs.poo.infra;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-public class Cinema {
+public class Cinema implements Serializable{
 	private String nome;
 	private String endereco;
 	private List<Sala> salas;

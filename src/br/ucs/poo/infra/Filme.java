@@ -2,11 +2,12 @@ package br.ucs.poo.infra;
 
 import java.util.List;
 import java.util.Set;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
-public class Filme {
+public class Filme implements Serializable{
 	private String nome;
 	private Date data_lancamento;
 	private String descricao;
