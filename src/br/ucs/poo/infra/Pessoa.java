@@ -6,6 +6,7 @@ public abstract class Pessoa implements Serializable{
 	private String nome;
 	private String paisOrigem;
 	private Pessoa conjuge;
+
 	
 	public String getNome() {
 		return nome;

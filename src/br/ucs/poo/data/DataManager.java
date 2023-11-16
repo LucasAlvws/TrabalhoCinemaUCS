@@ -2,11 +2,13 @@ package br.ucs.poo.data;
 import java.io.*;
 
 import br.ucs.poo.error.ArquivoNaoEncontradoException;
+import br.ucs.poo.error.CarregarArquivoException;
+import br.ucs.poo.error.SalvarArquivoException;
 import br.ucs.poo.infra.Cinema;
 public class DataManager {
 	
 	
-	public static Cinema carregarDados(String path) throws ArquivoNaoEncontradoException {
+	public static Cinema carregarDados(String path) throws CarregarArquivoException {
 		Cinema cine = null;
 		try {
 			FileInputStream fi = new FileInputStream(path);
@@ -18,18 +20,18 @@ public class DataManager {
 			
 		} 
 		catch (FileNotFoundException e) {
-			throw new ArquivoNaoEncontradoException();
+			throw new CarregarArquivoException();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			throw new CarregarArquivoException();
 		}
 		catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			throw new CarregarArquivoException();
 		}
 		return cine;
 	}
 	
-	public static boolean salvarDados(Cinema cinema, String path) {
+	public static boolean salvarDados(Cinema cinema, String path) throws SalvarArquivoException{
 		try {
 			FileOutputStream fo = new FileOutputStream(path);
 			ObjectOutputStream ou = new ObjectOutputStream(fo);
@@ -38,9 +40,8 @@ public class DataManager {
 			fo.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+			throw new SalvarArquivoException();
+			}
 		return true;
 	}
 	

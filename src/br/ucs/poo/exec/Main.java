@@ -1,8 +1,10 @@
 package br.ucs.poo.exec;
 
 import java.util.Scanner;
-
+import java.io.File;
 import br.ucs.poo.data.DataManager;
+import br.ucs.poo.error.CarregarArquivoException;
+import br.ucs.poo.error.SalvarArquivoException;
 import br.ucs.poo.infra.Cinema;
 
 public class Main {
@@ -11,13 +13,24 @@ public class Main {
 	
 	public Main() {
 		this.cinema = new Cinema();
-		try {
-			cinema = DataManager.carregarDados("src/br/ucs/poo/data/cinema.bin");
-		} catch (Exception e) {
-			this.cinema.setEndereco( "R. Francisco Getúlio Vargas, 1130 - Petrópolis");
+		String caminhoDoArquivo = "src/br/ucs/poo/data/cinema.bin";
+		File arquivo = new File(caminhoDoArquivo);
+		if (arquivo.exists()) {
+			try {
+				cinema = DataManager.carregarDados(caminhoDoArquivo);
+			} catch (CarregarArquivoException e) {
+				e.printStackTrace();
+			}
+        } else {
+        	this.cinema.setEndereco( "R. Francisco Getúlio Vargas, 1130 - Petrópolis");
 			this.cinema.setNome("UCS");
-			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-		}
+			try {
+				DataManager.salvarDados(cinema, caminhoDoArquivo);
+			} catch (SalvarArquivoException e1) {
+				e1.printStackTrace();
+			}
+        }
+		
 	}
 																																																													
 	public static void main(String[] args) {
@@ -163,7 +176,7 @@ public class Main {
 			if(classe.equals("Salas")) {
 				switch (opcaoCrud) {
 				case 1:
-					addSalas();
+					addSalas(cmd);
 					break;
 				case 2:
 					listarSalas();
@@ -216,16 +229,26 @@ public class Main {
 	}
 
 	public void addGenero(Scanner cmd) {
-		String opcao;
+		int opcao;
+		String nome;
+		do {
 		System.out.println("Add Gêneros:");
 		System.out.println("Digite o nome do gênero: ");
-		opcao = cmd.nextLine();
-		this.cinema.setGeneros(opcao);
-		DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		nome = cmd.nextLine();
+		this.cinema.setGeneros(nome);
+		try {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		} catch (SalvarArquivoException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Gênero salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
+		opcao = cmd.nextInt();
+		cmd.nextLine();
+		} while(opcao != 0);
 		
 	}
 	public void listarGenero() {
-		System.out.println("Lista de Gêneros");
+		System.out.println("Lista de Gêneros:");
 		System.out.println(this.cinema.listarGeneros());
 	}
 	public void modificaGenero() {
@@ -236,10 +259,28 @@ public class Main {
 	}
 	
 	public void addAtores() {
-		
+		int opcao;
+		String nome, pais;
+		do {
+		System.out.println("Add Atores:");
+		System.out.println("Digite o nome do Ator: ");
+		nome = cmd.nextLine();
+		System.out.println("Digite o país de origem do Ator: ");
+		pais = cmd.nextLine();
+		this.cinema.setPessoa(nome, pais, "ator");
+		try {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		} catch (SalvarArquivoException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Ator salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
+		opcao = cmd.nextInt();
+		cmd.nextLine();
+		} while(opcao != 0);
 	}
 	public void listarAtores() {
-		
+		System.out.println("Lista de Atores:");
+		System.out.println(this.cinema.listarPessoa("ator"));
 	}
 	public void modificaAtores() {
 		
@@ -249,10 +290,28 @@ public class Main {
 	}
 	
 	public void addDiretores() {
-		
+		int opcao;
+		String nome, pais;
+		do {
+		System.out.println("Add Diretores:");
+		System.out.println("Digite o nome do Diretor: ");
+		nome = cmd.nextLine();
+		System.out.println("Digite o país de origem do Diretor: ");
+		pais = cmd.nextLine();
+		this.cinema.setPessoa(nome, pais, "diretor");
+		try {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		} catch (SalvarArquivoException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Diretor salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
+		opcao = cmd.nextInt();
+		cmd.nextLine();
+		} while(opcao != 0);
 	}
 	public void listarDiretores() {
-		
+		System.out.println("Lista de Diretores:");
+		System.out.println(this.cinema.listarPessoa("diretor"));
 	}
 	public void modificaDiretores() {
 		
@@ -261,11 +320,30 @@ public class Main {
 		
 	}
 	
-	public void addSalas() {
-		
+	public void addSalas(Scanner cmd) {
+		int opcao, num;
+		do {
+		System.out.println("Add Salas:");
+		System.out.println("Digite o número da sala: ");
+		num = cmd.nextInt();
+		if(this.cinema.setSala(num)) {
+		try {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		} catch (SalvarArquivoException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Sala salva. Você deseja adicionar outro? 0-Não / 1-Sim");
+		}
+		else {
+			System.out.println("Número de sala já existe. Você deseja adicionar outro? 0-Não / 1-Sim");
+		}
+		opcao = cmd.nextInt();
+		cmd.nextLine();
+		} while(opcao != 0);
 	}
 	public void listarSalas() {
-		
+		System.out.println("Lista de Salas:");
+		System.out.println(this.cinema.listarSalas());
 	}
 	public void modificaSalas() {
 		

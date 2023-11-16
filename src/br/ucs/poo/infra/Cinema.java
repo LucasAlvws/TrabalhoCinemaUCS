@@ -71,6 +71,7 @@ public class Cinema implements Serializable{
 	
 	public String listarGeneros() {
 		 StringBuilder retorno = new StringBuilder();
+		 retorno.append("-------------------\n");
 		 try {
 			for (Genero gen : this.generos) {
 				retorno.append("-\n");
@@ -84,5 +85,90 @@ public class Cinema implements Serializable{
 		}
 		return retorno.toString();
 	 }
+	
+	public boolean setSala(int num) {
+		Sala sala = new Sala();
+		
+		boolean ex = false;
+		for(Sala s : salas) {
+			if(s.getNumero() == num) {
+				ex = true;
+			}
+		}
+		if(ex) {
+			return false;
+		}
+		else {
+			sala.setNumero(num);
+			this.salas.add(sala);
+			return true;
+		}
+	}
+	
+	public String listarSalas() {
+		 StringBuilder retorno = new StringBuilder();
+		 retorno.append("-------------------\n");
+		 try {
+			for (Sala s : salas) {
+				retorno.append("-\n");
+				retorno.append("Sala N°: " + s.getNumero() + "\n");
+	        }
+			retorno.append("-------------------\n");
+			
+		 }
+		 catch (NullPointerException e) {
+			retorno.append("Nenhum Gênero registrado.\n"); 
+		}
+		return retorno.toString();
+	 }
+	
+	public void setPessoa(String nome, String pais, String tipo) {
+		if(tipo=="ator") {
+			Ator pessoa = new Ator();
+			pessoa.setNome(nome);
+			pessoa.setPaisOrigem(pais);
+			this.atores.add(pessoa);
+		}
+		else {
+			System.out.println("aaa");
+			Diretor pessoa = new Diretor();
+			pessoa.setNome(nome);
+			pessoa.setPaisOrigem(pais);
+			this.diretores.add(pessoa);
+		}
+		
+	}
+	
+	public String listarPessoa(String tipo) {
+		 StringBuilder retorno = new StringBuilder();
+		 List<Pessoa> lista = new ArrayList<Pessoa>();
+		 if(tipo=="ator") {
+			 lista.addAll(this.atores);
+		 }
+		 else {
+			 lista.addAll(this.diretores);
+		 }
+		 retorno.append("-------------------\n");
+		 try {
+			for (Pessoa a : lista) {
+				retorno.append("-\n");
+				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem());
+				try {
+					retorno.append(" Conjuge: " + a.getConjuge().getNome());
+				} catch (Exception e) {
+					retorno.append(" Conjuge: Nenhum");
+				}
+				
+				retorno.append("\n");
+	        }
+			retorno.append("-------------------\n");
+			
+		 }
+		 catch (NullPointerException e) {
+			retorno.append("Nenhum Ator registrado.\n"); 
+		}
+		return retorno.toString();
+	 }
+	
 	
 }
