@@ -4,8 +4,11 @@ import java.util.Scanner;
 import java.io.File;
 import br.ucs.poo.data.DataManager;
 import br.ucs.poo.error.CarregarArquivoException;
+import br.ucs.poo.error.DataErradaException;
+import br.ucs.poo.error.SalaNaoEncontradaException;
 import br.ucs.poo.error.SalvarArquivoException;
 import br.ucs.poo.infra.Cinema;
+import br.ucs.poo.infra.Sala;
 
 public class Main {
 	private static Scanner cmd;
@@ -100,7 +103,7 @@ public class Main {
 			if(classe.equals("Filmes")) {
 				switch (opcaoCrud) {
 				case 1:
-					addFilme();
+					addFilme(cmd);
 					break;
 				case 2:
 					listarFilmes();
@@ -195,7 +198,7 @@ public class Main {
 			if(classe.equals("Horarios")) {
 				switch (opcaoCrud) {
 				case 1:
-					addHorarios();
+					addHorarios(cmd);
 					break;
 				case 2:
 					listarHorarios();
@@ -215,7 +218,7 @@ public class Main {
 		}
 	}
 	
-	public void addFilme() {
+	public void addFilme(Scanner cmd) {
 		
 	}
 	public void listarFilmes() {
@@ -352,11 +355,44 @@ public class Main {
 		
 	}
 	
-	public void addHorarios() {
-		
+	public void addHorarios(Scanner cmd) {
+		int opcao, num;
+		String hora, data;
+		do {
+			System.out.println("Add Horarios:");
+			System.out.println("Lista de Salas:");
+			System.out.println(this.cinema.listarSalas());
+			System.out.println("Digite o número de uma das salas acima: ");
+			num = cmd.nextInt();
+			cmd.nextLine();
+			System.out.println("Informe a data da sessão: ");
+			data = cmd.nextLine();
+			System.out.println("Informe o horário da sessão: ");
+			hora = cmd.nextLine();
+			Sala sala =  new Sala();
+			try {
+				sala = this.cinema.getSala(num);
+			} catch (SalaNaoEncontradaException e) {
+				e.printStackTrace();
+			}
+			try {
+				this.cinema.setHorario(data, sala , hora);
+			} catch (DataErradaException e) {
+				e.printStackTrace();
+			}
+			try {
+				DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+			} catch (SalvarArquivoException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Horario salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
+			opcao = cmd.nextInt();
+			cmd.nextLine();
+			} while(opcao != 0);
 	}
 	public void listarHorarios() {
-		
+		System.out.println("Lista de Horários:");
+		System.out.println(this.cinema.listarHorarios());
 	}
 	public void modificaHorarios() {
 		

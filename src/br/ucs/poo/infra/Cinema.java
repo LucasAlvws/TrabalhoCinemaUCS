@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import br.ucs.poo.error.DataErradaException;
+import br.ucs.poo.error.SalaNaoEncontradaException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 public class Cinema implements Serializable{
 	private String nome;
 	private String endereco;
@@ -105,6 +112,16 @@ public class Cinema implements Serializable{
 		}
 	}
 	
+	public Sala getSala(int num) throws SalaNaoEncontradaException{
+		for( Sala s : this.salas) {
+			if(s.getNumero() == num) {
+				return s;
+			}
+		}
+		throw new SalaNaoEncontradaException();
+
+	}
+	
 	public String listarSalas() {
 		 StringBuilder retorno = new StringBuilder();
 		 retorno.append("-------------------\n");
@@ -170,5 +187,37 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
+	public void setHorario(String dataString, Sala sala, String horario) throws DataErradaException {
+		Horario hora = new Horario();		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+            hora.setData(sdf.parse(dataString));
+        } catch (ParseException e) {
+            throw new DataErradaException();
+        }
+		hora.setHorario(horario);
+		hora.setSala(sala);
+		this.horarios.add(hora);
+	}
+	
+	public String listarHorarios() {
+		 StringBuilder retorno = new StringBuilder();
+		 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		 String dataFormatada;
+		 retorno.append("-------------------\n");
+		 try {
+			for (Horario h : this.horarios) {
+				dataFormatada = formato.format(h.getData());
+				retorno.append("-\n");
+				retorno.append("Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
+	        }
+			retorno.append("-------------------\n");
+			
+		 }
+		 catch (NullPointerException e) {
+			retorno.append("Nenhum Gênero registrado.\n"); 
+		}
+		return retorno.toString();
+	 }
 	
 }
