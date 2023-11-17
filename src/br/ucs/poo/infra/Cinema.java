@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.ucs.poo.error.DataErradaException;
+import br.ucs.poo.error.PessoaNaoEncontradaException;
 import br.ucs.poo.error.SalaNaoEncontradaException;
 
 import java.text.ParseException;
@@ -41,7 +42,7 @@ public class Cinema implements Serializable{
 		Filme filme = new Filme(nome, data, desc, duracao,atores, diretores, horarios, genero);
 		this.filmes.add(filme);
 	}
-	 public String listarFilmes() {
+	public String listarFilmes() {
 		 StringBuilder retorno = new StringBuilder();
 		 try {
 			for (Filme filme : this.filmes) {
@@ -139,11 +140,12 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
-	public void setPessoa(String nome, String pais, String tipo) {
+	public void setPessoa(String nome, String pais, String tipo, Pessoa conjuge) {
 		if(tipo=="ator") {
 			Ator pessoa = new Ator();
 			pessoa.setNome(nome);
 			pessoa.setPaisOrigem(pais);
+			pessoa.setConjuge(conjuge);
 			this.atores.add(pessoa);
 		}
 		else {
@@ -151,9 +153,24 @@ public class Cinema implements Serializable{
 			Diretor pessoa = new Diretor();
 			pessoa.setNome(nome);
 			pessoa.setPaisOrigem(pais);
+			pessoa.setConjuge(conjuge);
 			this.diretores.add(pessoa);
 		}
 		
+	}
+	
+	public Pessoa getPessoa(String nome) throws PessoaNaoEncontradaException{
+		List<Pessoa> lista = new ArrayList<Pessoa>();
+		lista.addAll(this.atores);
+		lista.addAll(this.diretores);
+		for( Pessoa p : lista) {
+			System.out.println(p.getNome() + "/" + nome);
+			if(p.getNome().equalsIgnoreCase(nome)){
+				return p;
+			}
+		}
+		throw new PessoaNaoEncontradaException();
+
 	}
 	
 	public String listarPessoa(String tipo) {
@@ -182,7 +199,34 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhum Ator registrado.\n"); 
+			retorno.append("Nenhuma Pessoa registrada.\n"); 
+		}
+		return retorno.toString();
+	 }
+	
+	public String listarTodasPessoas() {
+		 StringBuilder retorno = new StringBuilder();
+		 List<Pessoa> lista = new ArrayList<Pessoa>();
+		 lista.addAll(this.atores);
+		 lista.addAll(this.diretores);
+		 retorno.append("-------------------\n");
+		 try {
+			for (Pessoa a : lista) {
+				retorno.append("-\n");
+				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem());
+				try {
+					retorno.append(" Conjuge: " + a.getConjuge().getNome());
+				} catch (Exception e) {
+					retorno.append(" Conjuge: Nenhum");
+				}
+				
+				retorno.append("\n");
+	        }
+			retorno.append("-------------------\n");
+			
+		 }
+		 catch (NullPointerException e) {
+			retorno.append("Nenhuma Pessoa registrada.\n"); 
 		}
 		return retorno.toString();
 	 }

@@ -2,11 +2,12 @@ package br.ucs.poo.infra;
 
 import java.io.Serializable;
 
-public abstract class Pessoa implements Serializable{
+public class Pessoa implements Serializable{
 	private String nome;
 	private String paisOrigem;
 	private Pessoa conjuge;
-
+	
+	
 	
 	public String getNome() {
 		return nome;
