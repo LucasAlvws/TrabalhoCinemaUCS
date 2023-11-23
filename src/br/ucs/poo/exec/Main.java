@@ -1,15 +1,25 @@
 package br.ucs.poo.exec;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.io.File;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 import br.ucs.poo.data.DataManager;
+import static java.lang.Integer.*;
 import br.ucs.poo.error.CarregarArquivoException;
 import br.ucs.poo.error.DataErradaException;
 import br.ucs.poo.error.PessoaNaoEncontradaException;
 import br.ucs.poo.error.SalaNaoEncontradaException;
 import br.ucs.poo.error.SalvarArquivoException;
+import br.ucs.poo.infra.Ator;
 import br.ucs.poo.infra.Cinema;
+import br.ucs.poo.infra.Diretor;
+import br.ucs.poo.infra.Genero;
+import br.ucs.poo.infra.Horario;
 import br.ucs.poo.infra.Pessoa;
 import br.ucs.poo.infra.Sala;
 
@@ -138,7 +148,7 @@ public class Main {
 					addGenero();
 					break;
 				case 2:
-					listarGenero();
+					System.out.println(listarGenero());
 					break;
 				case 3:
 					modificaGenero();
@@ -157,7 +167,7 @@ public class Main {
 					addAtores();
 					break;
 				case 2:
-					listarAtores();
+					System.out.println(listarAtores());
 					break;
 				case 3:
 					modificaAtores();
@@ -176,7 +186,7 @@ public class Main {
 					addDiretores();
 					break;
 				case 2:
-					listarDiretores();
+					System.out.println(listarDiretores());
 					break;
 				case 3:
 					modificaDiretores();
@@ -214,7 +224,7 @@ public class Main {
 					addHorarios();
 					break;
 				case 2:
-					listarHorarios();
+					System.out.println(listarHorarios());
 					break;
 				case 3:
 					modificaHorarios();
@@ -230,10 +240,230 @@ public class Main {
 			
 		}
 	}
+
+	public void typeError(String msg)
+	{
+		System.out.println("!!!!!!!!!");
+		System.out.println(msg);
+		System.out.println("!!!!!!!!!");
+	}
+
+
+	public boolean opcaoRepeat(String msg)
+	{	
+		boolean opcaoTrue = false;
+		int opcao = 1;
+		System.out.println(msg + " Você deseja adicionar outro(a)? 0-Não / 1-Sim");
+
+		do {
+			try {
+				opcao = cmd.nextInt();
+				cmd.nextLine();
+
+				if (opcao != 1 && opcao != 0) { throw new Exception(""); }
+
+				opcaoTrue = true;
+			}
+			catch (Exception e) {
+				opcaoTrue = false;
+			}
+		} while (opcaoTrue == false);
+		
+		if (opcao == 1) return true;
+
+		return false;
+	}
+
+	public void saveCinema(Cinema cinema)
+	{	
+		try {
+			DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
+		} catch (SalvarArquivoException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Date getDateValidated(String getMsg)
+	{	
+		boolean dataTrue = false;
+		String data_lanc;
+		Date dataFim = new Date();
+
+		do {
+			try {
+				System.out.println("Digite a "+ getMsg +" (dd/mm/yyyy): ");
+				data_lanc = cmd.nextLine();
+				
+				SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy"); 
+				dataFim = formato.parse(data_lanc); 
+				dataTrue = true;
+			}
+			catch(Exception e) {
+				typeError("Data em formato inválido!");
+				dataTrue = false;
+			}
+		} while (dataTrue == false);
+
+		return dataFim;
+	}
+
+	public int getIntValidated(String getMsg)
+	{
+		int durac = 0;
+
+		boolean duracaoTrue = false;
+
+		do {
+			try {
+				System.out.println("Digite o(a) "+ getMsg + ": ");
+				durac = parseInt(cmd.nextLine());
+				duracaoTrue = true;
+			} catch (Exception e)
+			{	
+				typeError("Duração inválida!");
+				duracaoTrue = false;
+			}
+		} while (duracaoTrue == false);
+
+		return durac;
+	}
 	
 	public void addFilme() {
+		boolean  stopAtor = false, stopDiretor = false, stopGenero = false, stopHorario = false;
 		
+		System.out.println("Add Filmes:");
+
+		// GET NOME ===================================================================
+		System.out.println("Digite o nome do filme: ");
+		String nome = cmd.nextLine();
+
+		// GET DATA LANÇAMENTO ===================================================================
+		Date dataLancData = getDateValidated("data de lançamento");
+
+		// GET DESCRIÇÃO ===================================================================
+		System.out.println("Digite a descrição: ");
+		String desc = cmd.nextLine();
+
+		// GET DURAÇÃO ===================================================================
+		int durac = getIntValidated("duração (em minutos)");
+
+
+		// GET ATORES ===================================================================
+		List<Ator> atores_select = null;
+		String strAtores = listarAtores();
+		if (strAtores.contains(this.cinema.erroNenhumaPessoa)) {
+			System.out.println(strAtores);
+		}
+		else
+		{
+			atores_select = new ArrayList<Ator>();
+			do {
+				System.out.println("Adicionar Ator: ");
+				System.out.println(strAtores);
+				System.out.println("Digite o nome do Ator: ");
+				String ator_str = cmd.nextLine();
+				Ator ator = this.cinema.getAtor(ator_str);
+				if (ator.getNome() != ator.semNomeStr)
+				{
+					atores_select.add(ator);
+					if (!opcaoRepeat("Ator adicionado.")) { stopAtor = true; }
+				}
+				else 
+				{
+					typeError("Não existe um ator com esse nome, por favor escolha um nome válido.");
+				}
+			} while (stopAtor == false);
+		}
+
+		// GET GENERO ===================================================================
+		Genero gen = null;
+		String strGeneros = listarGenero();
+		if (strGeneros.contains(this.cinema.erroNenhumGenero)) {
+			System.out.println(strGeneros);
+		}
+		else
+		{
+			do {
+				System.out.println("Adicionar gênero: ");
+				System.out.println(strGeneros);
+				System.out.println("Digite o nome do gênero: ");
+				String genero = cmd.nextLine();
+				gen = this.cinema.getGenero(genero);
+		
+				if (gen.getNome() != gen.semNomeStr)
+				{			
+					stopGenero = true;
+				}
+				else 
+				{
+					typeError("Não existe um gênero com esse nome, por favor escolha um nome válido.");
+				}
+			} while (stopGenero == false);
+		}
+
+		// GET DIRETORES ===================================================================
+
+		List<Diretor> diretores_select = null;
+		String strDiretores = listarDiretores();
+		if (strDiretores.contains(this.cinema.erroNenhumaPessoa)) {
+			System.out.println(strDiretores);
+		}
+		else
+		{	
+			diretores_select = new ArrayList<Diretor>();
+			do {
+				System.out.println("Adicionar Diretor: ");
+				System.out.println(strDiretores);
+				System.out.println("Digite o nome do Diretor: ");
+				String ator_str = cmd.nextLine();
+				Diretor diretor = this.cinema.getDiretor(ator_str);
+				if (diretor.getNome() != diretor.semNomeStr)
+				{
+					diretores_select.add(diretor);
+					if (!opcaoRepeat("Diretor adicionado.")) { stopDiretor = true; }
+				}
+				else 
+				{
+					typeError("Não existe um diretor com esse nome, por favor escolha um nome válido.");
+				}
+			} while (stopDiretor == false);
+		}
+
+		// GET HORÁRIOS ===================================================================
+		List<Horario> horarios_select = null;
+		String strHorarios = listarHorarios();
+		if (strHorarios.contains(this.cinema.erroNenhumHorario)) {
+			System.out.println(strHorarios);
+		}
+		else
+		{
+			horarios_select = new ArrayList<Horario>();
+			do {
+				System.out.println("Adicionar Horário: ");
+				System.out.println(strHorarios);
+				Date data = getDateValidated("horário");
+
+				Horario horario = this.cinema.getHorario(data);
+				if (horario.getData() != null)
+				{
+					horarios_select.add(horario);
+					if (!opcaoRepeat("Horário adicionado.")) { stopHorario = true; }
+				}
+				else 
+				{
+					typeError("Não existe um horário com essa data, por favor escolha uma data válida.");
+				}
+			} while (stopHorario == false);
+		}
+
+
+		this.cinema.setFilmes(nome, dataLancData, desc, durac, atores_select, diretores_select, horarios_select, gen);
+
+		saveCinema(cinema);
+			
+		if (opcaoRepeat("Filme salvo.")) { addFilme(); }
 	}
+	
 	public void listarFilmes() {
 		System.out.println("Lista de Filmes:");
 		System.out.println(this.cinema.listarFilmes()); 
@@ -246,37 +476,32 @@ public class Main {
 	}
 
 	public void addGenero() {
-		int opcao;
+		boolean stopGenero = false;
 		String nome;
+
 		try {
 			do {
-			System.out.println("Add Gêneros:");
-			System.out.println("Digite o nome do gênero: ");
-			nome = cmd.nextLine();
-			this.cinema.setGeneros(nome);
-			try {
-				DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-			} catch (SalvarArquivoException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Gênero salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
-			opcao = 0;
-			try {
-				opcao = cmd.nextInt();
-			} catch (InputMismatchException e) {
-				System.out.println("Valor inválido, saindo...");
-			}
-			cmd.nextLine();
-			} while(opcao != 0);
+				System.out.println("Add Gêneros:");
+				System.out.println("Digite o nome do gênero: ");
+				nome = cmd.nextLine();
+				this.cinema.setGeneros(nome);
+				
+				saveCinema(cinema);
+				
+				if (!opcaoRepeat("Gênero salvo.")) { stopGenero = true; }
+
+			} while (stopGenero == false);
+
 		} catch (InputMismatchException e) {
 			System.out.println("Valor inválido, saindo sem salvar...");
 			cmd.nextLine();
 		}
 		
 	}
-	public void listarGenero() {
+	public String listarGenero() {
 		System.out.println("Lista de Gêneros:");
-		System.out.println(this.cinema.listarGeneros());
+		
+		return this.cinema.listarGeneros();
 	}
 	public void modificaGenero() {
 		
@@ -286,61 +511,54 @@ public class Main {
 	}
 	
 	public void addAtores() {
-		int opcao, opcaoConjuge;
+		int opcaoConjuge;
+		boolean stopAtor = false;
 		String nome, pais, conjuge;
 		Pessoa pconjuge = new Pessoa();
 		try {
 			do {
-			conjuge = "";
-			pconjuge = null;
-			System.out.println("Add Atores:");
-			System.out.println("Digite o nome do Ator: ");
-			nome = cmd.nextLine();
-			System.out.println("Digite o país de origem do Ator: ");
-			pais = cmd.nextLine();
-			System.out.println("Ator é casado? 0-Não / 1-Sim");
-			opcaoConjuge = cmd.nextInt();
-			cmd.nextLine();
-			if(opcaoConjuge != 0) {
-				System.out.println("Lista de Pessoas: ");
-				if(this.cinema.listarTodasPessoas().contains("Nenhuma Pessoa registrada")) {
-					System.out.println(this.cinema.listarTodasPessoas());
-				}
-				else {
-					System.out.println(this.cinema.listarTodasPessoas());
-					System.out.println("Digite o nome do conjuge: ");
-					conjuge = cmd.nextLine();
-					try {
-						pconjuge = this.cinema.getPessoa(conjuge);
-					} catch (PessoaNaoEncontradaException e) {
-						e.printStackTrace();
+				conjuge = "";
+				pconjuge = null;
+				System.out.println("Add Atores:");
+				System.out.println("Digite o nome do Ator: ");
+				nome = cmd.nextLine();
+				System.out.println("Digite o país de origem do Ator: ");
+				pais = cmd.nextLine();
+				System.out.println("Ator é casado? 0-Não / 1-Sim");
+				opcaoConjuge = cmd.nextInt();
+				cmd.nextLine();
+				if(opcaoConjuge != 0) {
+					System.out.println("Lista de Pessoas: ");
+					if(this.cinema.listarTodasPessoas().contains(this.cinema.erroNenhumaPessoa)) {
+						System.out.println(this.cinema.listarTodasPessoas());
 					}
+					else {
+						System.out.println(this.cinema.listarTodasPessoas());
+						System.out.println("Digite o nome do conjuge: ");
+						conjuge = cmd.nextLine();
+						try {
+							pconjuge = this.cinema.getPessoa(conjuge);
+						} catch (PessoaNaoEncontradaException e) {
+							e.printStackTrace();
+						}
+					}
+					
 				}
-				
-			}
-			this.cinema.setPessoa(nome, pais, "ator", pconjuge);
-			try {
-				DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-			} catch (SalvarArquivoException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Ator salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
-			opcao = 0;
-			try {
-				opcao = cmd.nextInt();
-			} catch (InputMismatchException e) {
-				System.out.println("Valor inválido, saindo...");
-			}
-			cmd.nextLine();
-			} while(opcao != 0);
+				this.cinema.setPessoa(nome, pais, "ator", pconjuge);
+				saveCinema(cinema);
+
+				if (!opcaoRepeat("Ator adicionado.")) { stopAtor = true; }
+			} while(stopAtor == false);
+
 		} catch (InputMismatchException e) {
 			System.out.println("Valor inválido, saindo sem salvar...");
 			cmd.nextLine();
 		}
 	}
-	public void listarAtores() {
+	public String listarAtores() {
 		System.out.println("Lista de Atores:");
-		System.out.println(this.cinema.listarPessoa("ator"));
+		String str = this.cinema.listarPessoa("ator");
+		return str;
 	}
 	public void modificaAtores() {
 		
@@ -350,61 +568,55 @@ public class Main {
 	}
 	
 	public void addDiretores() {
-		int opcao, opcaoConjuge;
+		int opcaoConjuge;
+		boolean stopDiretor = false;
 		String nome, pais, conjuge;
 		Pessoa pconjuge = new Pessoa();
 		try {
 			do {
-			conjuge = "";
-			pconjuge = null;
-			System.out.println("Add Diretores:");
-			System.out.println("Digite o nome do Diretor: ");
-			nome = cmd.nextLine();
-			System.out.println("Digite o país de origem do Diretor: ");
-			pais = cmd.nextLine();
-			System.out.println("Ator é casado? 0-Não / 1-Sim");
-			opcaoConjuge = cmd.nextInt();
-			cmd.nextLine();
-			if(opcaoConjuge != 0) {
-				System.out.println("Lista de Pessoas: ");
-				if(this.cinema.listarTodasPessoas().contains("Nenhuma Pessoa registrada")) {
-					System.out.println(this.cinema.listarTodasPessoas());
-				}
-				else {
-					System.out.println(this.cinema.listarTodasPessoas());
-					System.out.println("Digite o nome do conjuge: ");
-					conjuge = cmd.nextLine();
-					try {
-						pconjuge = this.cinema.getPessoa(conjuge);
-					} catch (PessoaNaoEncontradaException e) {
-						e.printStackTrace();
+				conjuge = "";
+				pconjuge = null;
+				System.out.println("Add Diretores:");
+				System.out.println("Digite o nome do Diretor: ");
+				nome = cmd.nextLine();
+				System.out.println("Digite o país de origem do Diretor: ");
+				pais = cmd.nextLine();
+				System.out.println("Ator é casado? 0-Não / 1-Sim");
+				opcaoConjuge = cmd.nextInt();
+				cmd.nextLine();
+				if(opcaoConjuge != 0) {
+					System.out.println("Lista de Pessoas: ");
+					if(this.cinema.listarTodasPessoas().contains(this.cinema.erroNenhumaPessoa)) {
+						System.out.println(this.cinema.listarTodasPessoas());
 					}
+					else {
+						System.out.println(this.cinema.listarTodasPessoas());
+						System.out.println("Digite o nome do conjuge: ");
+						conjuge = cmd.nextLine();
+						try {
+							pconjuge = this.cinema.getPessoa(conjuge);
+						} catch (PessoaNaoEncontradaException e) {
+							e.printStackTrace();
+						}
+					}
+					
 				}
+				this.cinema.setPessoa(nome, pais, "diretor", pconjuge);
 				
-			}
-			this.cinema.setPessoa(nome, pais, "diretor", pconjuge);
-			try {
-				DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-			} catch (SalvarArquivoException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Diretor salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
-			opcao = 0;
-			try {
-				opcao = cmd.nextInt();
-			} catch (InputMismatchException e) {
-				System.out.println("Valor inválido, saindo...");
-			}
-			cmd.nextLine();
-			} while(opcao != 0);
+				saveCinema(cinema);
+
+				if (!opcaoRepeat("Diretor salvo.")) { stopDiretor = true; }
+				
+			} while(stopDiretor == false);
 		} catch (InputMismatchException e) {
 			System.out.println("Valor inválido, saindo sem salvar...");
 			cmd.nextLine();
 		}
 	}
-	public void listarDiretores() {
+	public String listarDiretores() {
 		System.out.println("Lista de Diretores:");
-		System.out.println(this.cinema.listarPessoa("diretor"));
+
+		return this.cinema.listarPessoa("diretor");
 	}
 	public void modificaDiretores() {
 		
@@ -414,31 +626,23 @@ public class Main {
 	}
 	
 	public void addSalas() {
-		int opcao, num;
+		int num;
+		boolean stopSala = false;
 		try {
 			do {
-			System.out.println("Add Salas:");
-			System.out.println("Digite o número da sala: ");
-			num = cmd.nextInt();
-			if(this.cinema.setSala(num)) {
-			try {
-				DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-			} catch (SalvarArquivoException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Sala salva. Você deseja adicionar outro? 0-Não / 1-Sim");
-			}
-			else {
-				System.out.println("Número de sala já existe. Você deseja adicionar outro? 0-Não / 1-Sim");
-			}
-			opcao = 0;
-			try {
-				opcao = cmd.nextInt();
-			} catch (InputMismatchException e) {
-				System.out.println("Valor inválido, saindo...");
-			}
-			cmd.nextLine();
-			} while(opcao != 0);
+				System.out.println("Add Salas:");
+				System.out.println("Digite o número da sala: ");
+				num = cmd.nextInt();
+				if(this.cinema.setSala(num)) {
+				
+					saveCinema(cinema);
+					if (!opcaoRepeat("Sala salva.")) { stopSala = true; }
+				}
+				else {
+					if (!opcaoRepeat("Número de sala já existe.")) { stopSala = true; }
+				}
+			} while(stopSala == false);
+			
 		} catch (InputMismatchException e) {
 			System.out.println("Valor inválido, saindo sem salvar...");
 			cmd.nextLine();
@@ -456,7 +660,8 @@ public class Main {
 	}
 	
 	public void addHorarios() {
-		int opcao, num;
+		int num;
+		boolean stopHorario = false;
 		String hora, data;
 		try {
 			do {
@@ -481,28 +686,20 @@ public class Main {
 				} catch (DataErradaException e) {
 					e.printStackTrace();
 				}
-				try {
-					DataManager.salvarDados(cinema, "src/br/ucs/poo/data/cinema.bin");
-				} catch (SalvarArquivoException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Horario salvo. Você deseja adicionar outro? 0-Não / 1-Sim");
-				opcao = 0;
-				try {
-					opcao = cmd.nextInt();
-				} catch (InputMismatchException e) {
-					System.out.println("Valor inválido, saindo...");
-				}
-				cmd.nextLine();
-				} while(opcao != 0);
+				
+				saveCinema(cinema);
+
+				if (!opcaoRepeat("Horário salvo.")) { stopHorario = true; }
+			} while(stopHorario == false);
 		} catch (InputMismatchException e) {
 			System.out.println("Valor inválido, saindo sem salvar...");
 			cmd.nextLine();
 		}
 	}
-	public void listarHorarios() {
+	public String listarHorarios() {
 		System.out.println("Lista de Horários:");
-		System.out.println(this.cinema.listarHorarios());
+
+		return this.cinema.listarHorarios();
 	}
 	public void modificaHorarios() {
 		

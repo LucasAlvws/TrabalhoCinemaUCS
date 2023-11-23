@@ -4,8 +4,13 @@ import java.io.Serializable;
 
 public class Genero implements Serializable{
 	private String nome;
+	public String semNomeStr = "Nenhum";
 
 	public String getNome() {
+		if (nome == null)
+		{
+			return semNomeStr;
+		}
 		return nome;
 	}
 

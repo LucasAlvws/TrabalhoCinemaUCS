@@ -6,10 +6,14 @@ public class Pessoa implements Serializable{
 	private String nome;
 	private String paisOrigem;
 	private Pessoa conjuge;
-	
+	public String semNomeStr = "Nenhum";
 	
 	
 	public String getNome() {
+		if (nome == null)
+		{
+			return semNomeStr;
+		}
 		return nome;
 	}
 	public void setNome(String nome) {
@@ -22,6 +26,11 @@ public class Pessoa implements Serializable{
 		this.paisOrigem = paisOrigem;
 	}
 	public Pessoa getConjuge() {
+		if (conjuge == null)
+		{	
+			Pessoa conj = new Pessoa();
+			return conj;	
+		}
 		return conjuge;
 	}
 	public void setConjuge(Pessoa conjuge) {

@@ -21,7 +21,10 @@ public class Cinema implements Serializable{
 	private List<Ator> atores;
 	private List<Diretor> diretores;
 	private List<Horario> horarios;
-	
+	public String erroNenhumaPessoa = "Nenhuma Pessoa registrada.\n";
+	public String erroNenhumGenero = "Nenhum Gênero registrado.\n";
+	public String erroNenhumHorario = "Nenhum Horário registrado.\n";
+	public String erroNenhumaSala = "Nenhuma Sala registrada.\n";
 	
 	public Cinema() {
 		this.salas = new ArrayList<Sala>();
@@ -76,11 +79,20 @@ public class Cinema implements Serializable{
 		gen.setNome(nome);
 		this.generos.add(gen);
 	}
+
+	public String normalizeString(String string)
+	{
+		return string.toLowerCase().strip();
+	}
 	
 	public String listarGeneros() {
 		 StringBuilder retorno = new StringBuilder();
 		 retorno.append("-------------------\n");
 		 try {
+			if (this.generos.size() == 0)
+			{
+				retorno.append(erroNenhumGenero);
+			}
 			for (Genero gen : this.generos) {
 				retorno.append("-\n");
 				retorno.append("Nome: " + gen.getNome() + "\n");
@@ -89,7 +101,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhum Gênero registrado.\n"); 
+			retorno.append(erroNenhumGenero); 
 		}
 		return retorno.toString();
 	 }
@@ -127,15 +139,18 @@ public class Cinema implements Serializable{
 		 StringBuilder retorno = new StringBuilder();
 		 retorno.append("-------------------\n");
 		 try {
+			if (salas.size() == 0)
+			{
+				retorno.append(erroNenhumaSala);
+			}
 			for (Sala s : salas) {
 				retorno.append("-\n");
 				retorno.append("Sala N°: " + s.getNumero() + "\n");
 	        }
 			retorno.append("-------------------\n");
-			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhum Gênero registrado.\n"); 
+			retorno.append(erroNenhumaSala); 
 		}
 		return retorno.toString();
 	 }
@@ -158,6 +173,55 @@ public class Cinema implements Serializable{
 		}
 		
 	}
+
+	public Diretor getDiretor(String nome) {
+		Diretor diretor = new Diretor();
+		
+		for (Diretor d : this.diretores) {
+			if ((normalizeString(d.getNome())).equals(normalizeString(nome))) {
+				return d;
+			}
+		}
+		return diretor;
+	}
+
+	public Horario getHorario(Date data) {
+		Horario horario = new Horario();
+		
+		for (Horario d : this.horarios) {
+			if (d.getData().equals(data)) {
+				return d;
+			}
+		}
+		return horario;
+	}
+
+	public List<Ator> getAtores() {
+		return this.atores;
+	}
+
+	public Ator getAtor(String nome) {
+		Ator ator = new Ator();
+		
+		for (Ator a : this.atores) {
+			if ((normalizeString(a.getNome())).equals(normalizeString(nome))) {
+				return a;
+			}
+		}
+		return ator;
+	}
+
+	public Genero getGenero(String nome) {
+		Genero gen = new Genero();
+		
+		for (Genero g : this.generos) {
+			if (normalizeString(g.getNome()).equals(normalizeString(nome))) {
+				return g;
+			}
+		}
+		return gen;
+	}
+
 	
 	public Pessoa getPessoa(String nome) throws PessoaNaoEncontradaException{
 		List<Pessoa> lista = new ArrayList<Pessoa>();
@@ -165,7 +229,7 @@ public class Cinema implements Serializable{
 		lista.addAll(this.diretores);
 		for( Pessoa p : lista) {
 			System.out.println(p.getNome() + "/" + nome);
-			if(p.getNome().equalsIgnoreCase(nome)){
+			if((normalizeString(p.getNome())).equals(normalizeString(nome))){
 				return p;
 			}
 		}
@@ -184,14 +248,14 @@ public class Cinema implements Serializable{
 		 }
 		 retorno.append("-------------------\n");
 		 try {
+			if (lista.size() == 0)
+			{
+				retorno.append(erroNenhumaPessoa);
+			}
 			for (Pessoa a : lista) {
 				retorno.append("-\n");
 				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem());
-				try {
-					retorno.append(" Conjuge: " + a.getConjuge().getNome());
-				} catch (Exception e) {
-					retorno.append(" Conjuge: Nenhum");
-				}
+				retorno.append(" Conjuge: " + a.getConjuge().getNome());
 				
 				retorno.append("\n");
 	        }
@@ -199,7 +263,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhuma Pessoa registrada.\n"); 
+			retorno.append(erroNenhumaPessoa); 
 		}
 		return retorno.toString();
 	 }
@@ -211,6 +275,10 @@ public class Cinema implements Serializable{
 		 lista.addAll(this.diretores);
 		 retorno.append("-------------------\n");
 		 try {
+			if (lista.size() == 0)
+			{
+				retorno.append(erroNenhumaPessoa);
+			}
 			for (Pessoa a : lista) {
 				retorno.append("-\n");
 				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem());
@@ -226,7 +294,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhuma Pessoa registrada.\n"); 
+			retorno.append(erroNenhumaPessoa); 
 		}
 		return retorno.toString();
 	 }
@@ -250,6 +318,10 @@ public class Cinema implements Serializable{
 		 String dataFormatada;
 		 retorno.append("-------------------\n");
 		 try {
+			if (this.horarios.size() == 0)
+			{
+				retorno.append(erroNenhumHorario);
+			}
 			for (Horario h : this.horarios) {
 				dataFormatada = formato.format(h.getData());
 				retorno.append("-\n");
@@ -259,7 +331,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append("Nenhum Gênero registrado.\n"); 
+			retorno.append(erroNenhumHorario); 
 		}
 		return retorno.toString();
 	 }

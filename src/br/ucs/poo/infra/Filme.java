@@ -36,6 +36,11 @@ public class Filme implements Serializable{
 	}
 	
 	public Genero getGenero() {
+		if (genero == null)
+		{	
+			Genero genero = new Genero();
+			return genero;	
+		}
 		return genero;
 	}
 	public void setGenero(Genero genero) {
