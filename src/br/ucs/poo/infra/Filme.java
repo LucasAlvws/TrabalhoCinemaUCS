@@ -128,6 +128,9 @@ public class Filme implements Serializable{
 		 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		 String dataFormatada;
 		 retorno.append("-------------------\n");
+		 if(this.horarios.size() == 0) {
+			 throw new HorarioNaoEncontradaException(); 
+		 }
 		 try {
 			for (Horario h : this.horarios) {
 				dataFormatada = formato.format(h.getData());
@@ -190,15 +193,17 @@ public class Filme implements Serializable{
 	}
 	  
 
-	public void listarDetalhes() 
+	public String listarDetalhes() 
 	{
-		System.out.println("\nDescrição do filme: \n");
+		StringBuilder retorno = new StringBuilder();
+		retorno.append("-------------------\n");
+		retorno.append("\nDescrição do filme: \n");
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		System.out.println("Nome: " + this.getNome());
-		System.out.println("Data de lançamento: " + sdf.format(this.getData_lancamento()));
-		System.out.println("Descrição: " + this.getDescricao());
-		System.out.println("Gênero: " + this.getGenero().getNome());
-		System.out.println("Duração: " + this.getDuracao());
-		System.out.println("\n");
+		retorno.append("Nome: " + this.getNome()+ "\n");
+		retorno.append("Data de lançamento: " + sdf.format(this.getData_lancamento())+ "\n");
+		retorno.append("Descrição: " + this.getDescricao()+ "\n");
+		retorno.append("Gênero: " + this.getGenero().getNome()+ "\n");
+		retorno.append("Duração: " + this.getDuracao() + "\n");
+		return retorno.toString();
 	}
 }

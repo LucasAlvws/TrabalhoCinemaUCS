@@ -7,6 +7,7 @@ import java.util.Set;
 
 import br.ucs.poo.error.DataErradaException;
 import br.ucs.poo.error.FilmeNaoEncontradoException;
+import br.ucs.poo.error.GeneroNaoEncontradaException;
 import br.ucs.poo.error.HorarioNaoEncontradaException;
 import br.ucs.poo.error.PessoaNaoEncontradaException;
 import br.ucs.poo.error.SalaNaoEncontradaException;
@@ -64,6 +65,16 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
+	public void deleteFilme(String f) throws FilmeNaoEncontradoException{
+		try {
+			Filme filme = new Filme();
+			filme = getFilme(f);
+			this.filmes.remove(filme);
+		}catch (FilmeNaoEncontradoException e) {
+			throw new FilmeNaoEncontradoException();
+		}
+	}
+	
 	public boolean MudarHor(String op_filme,String tipo,Date data_h,int sala, String op_horario, String op) {
 		Filme f = new Filme();
 		try {
@@ -97,7 +108,7 @@ public class Cinema implements Serializable{
 		return true;
 	}
 
-	public boolean MudarFilme(String filme, String var, String op){
+	public boolean MudarFilme(String filme, String var, String op) throws GeneroNaoEncontradaException{
 		Filme f = new Filme();
 		try {
 			f = getFilme(filme);
@@ -122,7 +133,11 @@ public class Cinema implements Serializable{
 						else {
 							if(normalizeString(op).equalsIgnoreCase("Gênero")) { 
 								Genero ger;
-								ger = getGenero(var);
+								try {
+									ger = getGenero(var);
+								} catch (GeneroNaoEncontradaException e) {
+									throw new GeneroNaoEncontradaException();
+								}
 								f.setGenero(ger);}
 							else {
 								if(normalizeString(op).equalsIgnoreCase("addator")) { 
@@ -231,6 +246,22 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
+	public void altGenero(String nome, String altNome) throws GeneroNaoEncontradaException{
+		Genero g = new Genero();
+		g = getGenero(nome);
+		g.setNome(altNome);
+	}
+	
+	public void deleteGenero(String nome) throws GeneroNaoEncontradaException {
+		try {
+			Genero g = new Genero();
+			g = getGenero(nome);
+			this.generos.remove(g);
+		}catch (GeneroNaoEncontradaException e) {
+			throw new GeneroNaoEncontradaException();
+		}
+	}
+	
 	public boolean setSala(int num) {
 		Sala sala = new Sala();
 		
@@ -310,8 +341,6 @@ public class Cinema implements Serializable{
 	}
 
 	public Horario getHorario(Date data, int sala, String hora) throws HorarioNaoEncontradaException {
-		Horario horario = new Horario();
-		
 		for (Horario d : this.horarios) {
 			if (d.getData().equals(data) && d.getSala().getNumero() == sala && normalizeString(d.getHorario()).equals(normalizeString(hora)) ) {
 				return d;
@@ -335,15 +364,14 @@ public class Cinema implements Serializable{
 		return ator;
 	}
 
-	public Genero getGenero(String nome) {
-		Genero gen = new Genero();
+	public Genero getGenero(String nome) throws GeneroNaoEncontradaException {
 		
 		for (Genero g : this.generos) {
 			if (normalizeString(g.getNome()).equals(normalizeString(nome))) {
 				return g;
 			}
 		}
-		return gen;
+		throw new GeneroNaoEncontradaException();
 	}
 
 	
