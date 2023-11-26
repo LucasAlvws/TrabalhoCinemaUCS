@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import br.ucs.poo.error.FilmeNaoEncontradoException;
 import br.ucs.poo.data.DataManager;
 import static java.lang.Integer.*;
 import br.ucs.poo.error.CarregarArquivoException;
@@ -16,6 +17,7 @@ import br.ucs.poo.error.PessoaNaoEncontradaException;
 import br.ucs.poo.error.SalaNaoEncontradaException;
 import br.ucs.poo.error.SalvarArquivoException;
 import br.ucs.poo.infra.Ator;
+import br.ucs.poo.infra.Filme;
 import br.ucs.poo.infra.Cinema;
 import br.ucs.poo.infra.Diretor;
 import br.ucs.poo.infra.Genero;
@@ -100,6 +102,12 @@ public class Main {
 				break;
 			case 6:
 				crud("Horarios");
+				break;
+			case 8:
+				pesquisaFilme();
+				break;
+			case 9 :
+				comprarIngresso();
 				break;
 			case 10:
 				System.out.println("Deseja realmente sair? '1-Sim/2-Não'");
@@ -299,6 +307,64 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
+
+
+	public void comprarIngresso()
+	{	
+		Filme f;
+		System.out.println("Listagem de filmes: ");
+		this.cinema.listarFilmes();
+
+		System.out.println("Digite o nome do filme desejado: ");
+		String qs = cmd.nextLine();
+
+		try {
+			f = this.cinema.getFilme(qs);
+			f.listarDetalhes();
+		}catch (FilmeNaoEncontradoException e)
+		{
+			e.printStackTrace();
+			run();
+		}
+		
+		
+
+	}
+	
+
+	public void pesquisaFilme()
+	{	
+		List<Filme> filmes = new ArrayList<Filme>();
+
+		
+		System.out.println("Pesquise: ");
+		String qs = cmd.nextLine();
+
+		System.out.println("\nLista de filmes pesquisados por '" + qs  +"': ");
+		filmes = this.cinema.searchFilmes(qs);
+	
+		if (filmes.size() == 0)
+		{
+			System.out.println("Não foram encontrados nenhum filme por '"+ qs + "'.");
+			run();
+		}
+		
+		for( Filme f : filmes) {
+			System.out.println("- " + f.getNome());
+		}
+
+		System.out.println("\nDigite o nome do filme desejado: ");
+		String nFilme = cmd.nextLine();
+		try {
+			Filme f = this.cinema.getFilme(nFilme);
+			f.listarDetalhes();
+		}catch (FilmeNaoEncontradoException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
 
 	public Date getDateValidated(String getMsg)
 	{	
