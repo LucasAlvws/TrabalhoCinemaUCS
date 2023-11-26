@@ -70,6 +70,10 @@ public class Filme implements Serializable{
 	public void setDuracao(int duracao) {
 		this.duracao = duracao;
 	}
+
+	public List<Ator> getAtores() {
+		return atores;
+	}
 	
 	  
 }

@@ -84,28 +84,37 @@ public class Main {
 			cmd.nextLine();
 			switch (opcao) {
 			case 1:
-				crud(cmd, "Filmes");
+				crud("Filmes");
 				break;
 			case 2:
-				crud(cmd, "Gêneros");
+				crud("Gêneros");
 				break;
 			case 3:
-				crud(cmd, "Atores");
+				crud("Atores");
 				break;
 			case 4:
-				crud(cmd, "Diretores");
+				crud("Diretores");
 				break;
 			case 5:
-				crud(cmd, "Salas");
+				crud("Salas");
 				break;
 			case 6:
-				crud(cmd, "Horarios");
+				crud("Horarios");
 				break;
+			case 10:
+				System.out.println("Deseja realmente sair? '1-Sim/2-Não'");
+				opcao = cmd.nextInt();
+				if (opcao == 1){
+					saveCinema(cinema);
+					System.out.println("Saindo...");
+					cmd.close();
+					System.exit(0);
 				}
+			}
 		}
 	}
 	
-	public void crud(Scanner cmd, String classe) {
+	public void crud(String classe) {
 		int opcaoCrud;
 		while (true)
 		{
@@ -205,7 +214,7 @@ public class Main {
 					addSalas();
 					break;
 				case 2:
-					listarSalas();
+					System.out.println(listarSalas()); 
 					break;
 				case 3:
 					modificaSalas();
@@ -248,7 +257,15 @@ public class Main {
 		System.out.println("!!!!!!!!!");
 	}
 
-
+	public void altObj(String filme,String var,String tipo) {
+		if(this.cinema.MudarFilme(filme ,var, tipo)) {
+			System.out.println(tipo + " modificado.");
+		}
+		else {
+			System.out.println("Erro ao modificar o "+ tipo +".");
+		}
+	}
+	
 	public boolean opcaoRepeat(String msg)
 	{	
 		boolean opcaoTrue = false;
@@ -441,9 +458,14 @@ public class Main {
 			do {
 				System.out.println("Adicionar Horário: ");
 				System.out.println(strHorarios);
-				Date data = getDateValidated("horário");
-
-				Horario horario = this.cinema.getHorario(data);
+				Date data = getDateValidated("Data");
+				System.out.println("N° Sala: ");
+				int sala = cmd.nextInt();	
+				cmd.nextLine();
+				System.out.println("Horário: ");
+				String op_horario = cmd.nextLine();
+			
+				Horario horario = this.cinema.getHorario(data, sala, op_horario);
 				if (horario.getData() != null)
 				{
 					horarios_select.add(horario);
@@ -463,12 +485,104 @@ public class Main {
 			
 		if (opcaoRepeat("Filme salvo.")) { addFilme(); }
 	}
-	
 	public void listarFilmes() {
 		System.out.println("Lista de Filmes:");
 		System.out.println(this.cinema.listarFilmes()); 
 	}
 	public void modificaFilme() {
+		boolean stopFilme = false;
+		String tipo;
+		String op_filme;
+		int op_mod;
+		System.out.println(this.cinema.listarFilmes()); 
+		try {
+			do {
+				System.out.println("Qual filme você deseja modificar? (Digite o nome dele)");
+				op_filme = cmd.nextLine();
+				System.out.println("O que você deseja modificar nele?");
+				System.out.println("1-Nome\n2-Data\n3-Descrição\n4-Duração\n5-Atores\n6-Diretores\n7-Horários\n8-Gênero\n9-Cancelar");
+				op_mod = cmd.nextInt();
+				cmd.nextLine();
+				switch (op_mod) {
+				case 1:
+					String nome;
+					System.out.println("Informe o novo nome:");
+					nome = cmd.nextLine();
+					tipo = "Nome";
+					altObj(op_filme, nome, tipo);
+					break;
+				case 2:
+					String data;
+					System.out.println("Informe a nova data:");
+					data = cmd.nextLine();
+					tipo = "Data";
+					altObj(op_filme, data, tipo);
+					break;
+				case 3:
+					String desc;
+					System.out.println("Informe a nova descrição:");
+					desc = cmd.nextLine();
+					tipo = "Descrição";
+					altObj(op_filme, desc, tipo);
+					break;
+				case 4:
+					String duracao;
+					System.out.println("Informe a nova duração:");
+					duracao = cmd.nextLine();
+					tipo = "Duração";
+					altObj(op_filme, duracao, tipo);
+					break;
+				case 5:
+					int op;
+					String nome_ator;
+					System.out.println("Você deseja adicionar ou remover atores? 1-Adicionar/2-Remover");
+					op = cmd.nextInt();
+					cmd.nextLine();
+					if(op == 1) {
+						System.out.println(this.cinema.listarPessoa("ator"));
+						System.out.println("Digite o nome do ator que você quer adicionar");
+						nome_ator = cmd.nextLine();
+						if(this.cinema.MudarFilme(op_filme ,nome_ator, "addator")) {
+							System.out.println("Ator adcionado.");
+						}
+						else {
+							System.out.println("Erro ao adicionar o Ator.");
+						}
+						break;
+					}
+					if(op == 2) {
+						System.out.println(this.cinema.listarPessoa("ator"));
+						System.out.println("Digite o nome do ator que você quer remover");
+						nome_ator = cmd.nextLine();
+						if(this.cinema.MudarFilme(op_filme ,nome_ator, "remator")) {
+							System.out.println("Ator removido.");
+						}
+						else {
+							System.out.println("Erro ao removido o Ator.");
+						}
+						break;
+					}
+				case 8:
+					String genero;
+					System.out.println(this.cinema.listarGeneros());
+					System.out.println("Informe o nome do novo gênero:");
+					genero =cmd.nextLine();
+					tipo = "Gênero";
+					altObj(op_filme, genero, tipo);
+					break;
+				case 9:
+					break;
+				}
+				
+				saveCinema(cinema);
+				if (!opcaoRepeat("Filme Modificado.")) { stopFilme = true; }
+
+			} while (stopFilme == false);
+
+		} catch (InputMismatchException e) {
+			System.out.println("Valor inválido, saindo sem salvar...");
+			cmd.nextLine();
+		}
 		
 	}
 	public void excluiFilme() {
@@ -648,9 +762,9 @@ public class Main {
 			cmd.nextLine();
 		}
 	}
-	public void listarSalas() {
+	public String listarSalas() {
 		System.out.println("Lista de Salas:");
-		System.out.println(this.cinema.listarSalas());
+		return this.cinema.listarSalas();
 	}
 	public void modificaSalas() {
 		
@@ -708,5 +822,5 @@ public class Main {
 		
 	}
 	
-	
+	 
 }

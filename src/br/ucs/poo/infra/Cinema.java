@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.ucs.poo.error.DataErradaException;
+import br.ucs.poo.error.FilmeNaoEncontradoException;
 import br.ucs.poo.error.PessoaNaoEncontradaException;
 import br.ucs.poo.error.SalaNaoEncontradaException;
 
@@ -47,11 +48,12 @@ public class Cinema implements Serializable{
 	}
 	public String listarFilmes() {
 		 StringBuilder retorno = new StringBuilder();
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		 try {
 			for (Filme filme : this.filmes) {
 				retorno.append("-\n");
-				retorno.append("Nome: " + filme.getNome() + " Descrição: " + filme.getDescricao() + " Data: " + filme.getData_lancamento().toString() + " Gênero: " + filme.getGenero().getNome() + "\n");
-	        }
+				retorno.append("Nome: " + filme.getNome() + " Descrição: " + filme.getDescricao() + " Data: " + sdf.format(filme.getData_lancamento()) + " Gênero: " + filme.getGenero().getNome() +  " Duração: " + filme.getDuracao() + "\n");
+			}
 			retorno.append("-------------------\n");
 			
 		 }
@@ -60,6 +62,58 @@ public class Cinema implements Serializable{
 		}
 		return retorno.toString();
 	 }
+	
+	public boolean MudarFilme(String filme, String var, String op){
+		Filme f = new Filme();
+		try {
+			f = getFilme(filme);
+			if(normalizeString(op)== normalizeString("Nome")) { f.setNome(var); }
+			if(normalizeString(op)== normalizeString("Data")) { 
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		        try {
+					f.setData_lancamento(sdf.parse(var));
+				}  catch (ParseException e) {
+					return false;
+		        }
+			}
+			if(normalizeString(op)== normalizeString("Descrição")) { f.setDescricao(var); }
+			if(normalizeString(op)== normalizeString("Duração")) { 
+				int dur;
+				dur = Integer.parseInt(var);
+				f.setDuracao(dur); }
+			if(normalizeString(op)== normalizeString("Gêneros")) { 
+				Genero ger;
+				ger = getGenero(var);
+				f.setGenero(ger);}
+			if(normalizeString(op)== normalizeString("addator")) { 
+				Ator a;
+				a = getAtor(var);
+				f.getAtores().add(a);}
+			if(normalizeString(op)== normalizeString("remator")) { 
+				Ator a;
+				a = getAtor(var);
+				f.getAtores().remove(a);}
+			
+			
+		} catch (FilmeNaoEncontradoException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	public Filme getFilme(String nome) throws FilmeNaoEncontradoException{
+		for( Filme f : this.filmes) {
+			System.out.println(f.getNome() + " " + nome);
+			if((normalizeString(f.getNome())).equals(normalizeString(nome))) {
+				return f;
+			}
+		}
+		throw new FilmeNaoEncontradoException();
+	}
+	
 	
 	public String getNome() {
 		return nome;
@@ -185,11 +239,11 @@ public class Cinema implements Serializable{
 		return diretor;
 	}
 
-	public Horario getHorario(Date data) {
+	public Horario getHorario(Date data, int sala, String hora) {
 		Horario horario = new Horario();
 		
 		for (Horario d : this.horarios) {
-			if (d.getData().equals(data)) {
+			if (d.getData().equals(data) && d.getSala().getNumero() == sala && normalizeString(d.getHorario()).equals(normalizeString(hora)) ) {
 				return d;
 			}
 		}
@@ -299,7 +353,7 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
-	public void setHorario(String dataString, Sala sala, String horario) throws DataErradaException {
+	public void setHorario(String dataString, Sala sala, String horario) throws DataErradaException{
 		Horario hora = new Horario();		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		try {
