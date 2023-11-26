@@ -96,7 +96,7 @@ public class Cinema implements Serializable{
 		}
 		return true;
 	}
-	
+
 	public boolean MudarFilme(String filme, String var, String op){
 		Filme f = new Filme();
 		try {
@@ -164,6 +164,7 @@ public class Cinema implements Serializable{
 		return true;
 	}
 	
+
 	public List<Filme> searchFilmes(String qs) {
 		List<Filme> filmes = new ArrayList<Filme>();
 

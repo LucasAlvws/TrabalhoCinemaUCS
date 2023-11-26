@@ -81,7 +81,7 @@ public class Filme implements Serializable{
 		return atores;
 	}
 	
-<<<<<<< HEAD
+
 	public void addAtor(Ator a) {
 		if( this.atores != null) {
 			this.atores.add(a);
@@ -189,7 +189,7 @@ public class Filme implements Serializable{
 		return retorno.toString();
 	}
 	  
-=======
+
 	public void listarDetalhes() 
 	{
 		System.out.println("\nDescrição do filme: \n");
@@ -201,5 +201,4 @@ public class Filme implements Serializable{
 		System.out.println("Duração: " + this.getDuracao());
 		System.out.println("\n");
 	}
->>>>>>> 2a45d665e9b580edb4addb673b8116f4dee8e857
 }
