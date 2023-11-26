@@ -164,7 +164,16 @@ public class Cinema implements Serializable{
 		return true;
 	}
 	
-	
+	public List<Filme> searchFilmes(String qs) {
+		List<Filme> filmes = new ArrayList<Filme>();
+
+		for( Filme f : this.filmes) {
+			if((normalizeString(f.getNome())).contains(normalizeString(qs))) {
+				filmes.add(f);
+			}
+		}
+		return filmes;
+	}
 	
 	public Filme getFilme(String nome) throws FilmeNaoEncontradoException{
 		for( Filme f : this.filmes) {

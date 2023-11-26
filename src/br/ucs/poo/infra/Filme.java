@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.text.SimpleDateFormat;
 
 public class Filme implements Serializable{
 	private String nome;
@@ -80,6 +81,7 @@ public class Filme implements Serializable{
 		return atores;
 	}
 	
+<<<<<<< HEAD
 	public void addAtor(Ator a) {
 		if( this.atores != null) {
 			this.atores.add(a);
@@ -187,4 +189,17 @@ public class Filme implements Serializable{
 		return retorno.toString();
 	}
 	  
+=======
+	public void listarDetalhes() 
+	{
+		System.out.println("\nDescrição do filme: \n");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		System.out.println("Nome: " + this.getNome());
+		System.out.println("Data de lançamento: " + sdf.format(this.getData_lancamento()));
+		System.out.println("Descrição: " + this.getDescricao());
+		System.out.println("Gênero: " + this.getGenero().getNome());
+		System.out.println("Duração: " + this.getDuracao());
+		System.out.println("\n");
+	}
+>>>>>>> 2a45d665e9b580edb4addb673b8116f4dee8e857
 }
