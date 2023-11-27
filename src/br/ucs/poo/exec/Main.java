@@ -275,7 +275,7 @@ public class Main {
 		System.out.println("!!!!!!!!!");
 	}
 
-	public void altObj(String filme,String var,String tipo) throws GeneroNaoEncontradaException {
+	public void altObj(String filme,String var,String tipo) throws GeneroNaoEncontradaException, PessoaNaoEncontradaException {
 		try {
 			if(this.cinema.MudarFilme(filme ,var, tipo)) {
 				System.out.println(tipo + " modificado.");
@@ -286,9 +286,12 @@ public class Main {
 		} catch (GeneroNaoEncontradaException e) {
 			throw new GeneroNaoEncontradaException();
 		}
+		catch (PessoaNaoEncontradaException e) {
+			throw new PessoaNaoEncontradaException();
+		}
 	}
 	
-	public void altObj(String filme,String var,String tipo, String addrem) throws GeneroNaoEncontradaException{
+	public void altObj(String filme,String var,String tipo, String addrem) throws GeneroNaoEncontradaException, PessoaNaoEncontradaException{
 		try {
 			if(this.cinema.MudarFilme(filme ,var, addrem)) {
 				System.out.println(tipo + " modificado.");
@@ -298,6 +301,9 @@ public class Main {
 			}
 		} catch (GeneroNaoEncontradaException e) {
 			throw new GeneroNaoEncontradaException();
+		}
+		catch (PessoaNaoEncontradaException e) {
+			throw new PessoaNaoEncontradaException();
 		}
 	}
 	
@@ -541,7 +547,7 @@ public class Main {
 		String nFilme = cmd.nextLine();
 		try {
 			Filme f = this.cinema.getFilme(nFilme);
-			f.listarDetalhes();
+			System.out.println(f.listarDetalhes());
 		}catch (FilmeNaoEncontradoException e)
 		{
 			System.out.println(e.getMessage());
@@ -748,9 +754,9 @@ public class Main {
 						String nome;
 						System.out.println("Informe o novo nome:");
 						nome = cmd.nextLine();
-						op_filme = nome;
 						tipo = "Nome";
 						altObj(op_filme, nome, tipo);
+						op_filme = nome;
 						break;
 					case 2:
 						String data;
@@ -914,7 +920,7 @@ public class Main {
 						break;
 					}
 					saveCinema(cinema);
-					if (!opcaoRepeat("Filme Modificado.")) { stopalt = true; }
+					if (!opcaoRepeat("Filme " +op_filme+ " Modificado.")) { stopalt = true; }
 				}while(stopalt == false); 
 				
 				if (!opcaoRepeat("Filme Modificado.")) { stopFilme = true; }
@@ -931,6 +937,10 @@ public class Main {
 			System.out.println(e.getMessage());
 		}
 		catch (GeneroNaoEncontradaException e) {
+			System.out.println("Saindo sem salvar...");
+			System.out.println(e.getMessage());
+		}
+		catch (PessoaNaoEncontradaException e) {
 			System.out.println("Saindo sem salvar...");
 			System.out.println(e.getMessage());
 		}
@@ -1100,10 +1110,85 @@ public class Main {
 		}
 	}
 	public void modificaAtores() {
-		
+		boolean stopAtor=false, stopAlt = false;
+		String nome, altNome, altPais, altConjuge;
+		int op_alt;
+		try {
+			do {
+				System.out.println("Qual ator você deseja modificar?");
+				System.out.println(this.cinema.listarPessoa("ator"));
+				System.out.println("Digite o nome do ator:");
+				nome = cmd.nextLine();
+				System.out.println(this.cinema.getAtor(nome).listarDetalhes());
+				do {
+					System.out.println("O que você deseja alterar?");
+					System.out.println("1-Nome\n2-País\n3-Conjugê\n4-Sair");
+					op_alt = cmd.nextInt();
+					cmd.nextLine();
+					switch (op_alt) {
+					case 1:
+						System.out.println("Digite o novo nome do ator:");
+						altNome = cmd.nextLine();
+						this.cinema.altPessoa("ator", nome, altNome, "nome");
+						nome = altNome;
+						break;
+					case 2:
+						System.out.println("Digite o novo país do ator:");
+						altPais = cmd.nextLine();
+						this.cinema.altPessoa("ator", nome, altPais, "pais");
+						break;
+					case 3:
+						try {
+							System.out.println(this.cinema.listarTodasPessoas());
+							System.out.println("Digite o nome do novo conjugê do ator:");
+							altConjuge = cmd.nextLine();
+							this.cinema.altPessoa("ator", nome, altConjuge, "conjuge");
+						}
+						catch(PessoaNaoEncontradaException e) {
+							System.out.println("Erro ao alterar conjugê.");
+						}
+						break;
+					case 4:
+						break;
+					}
+					
+					if (!opcaoRepeat("Ator " + nome + " modificado.")) { stopAlt = true; }
+				}while(stopAlt == false);
+				saveCinema(cinema);
+				if (!opcaoRepeat("Ator modificado.")) { stopAtor = true; }
+
+			} while (stopAtor == false);
+		} catch (PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	public void excluiAtores() {
-		
+		boolean stopPessoa=false;
+		String nome, opcao = "Ator modificado" ;
+		int op_s;
+		try {
+			do {
+				System.out.println("Qual ator você deseja excluir?");
+				System.out.println(this.cinema.listarPessoa("ator"));
+				System.out.println("Digite o nome do ator:");
+				nome = cmd.nextLine();
+				System.out.println(this.cinema.getAtor(nome).listarDetalhes());
+				System.out.println("Você tem certeza que quer excluir esse ator? 1-Sim/0-Não");
+				op_s = cmd.nextInt();
+				cmd.nextLine();
+				if(op_s == 1 ) {
+					this.cinema.deletePessoa("ator", nome);
+				}
+				else {
+					opcao = "Ator não excluído";
+				}
+				saveCinema(cinema);
+				if (!opcaoRepeat(opcao)) { stopPessoa = true; }
+
+			} while (stopPessoa == false);
+		} catch (PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void addDiretores() {
@@ -1155,10 +1240,85 @@ public class Main {
 		}
 	}
 	public void modificaDiretores() {
-		
+		boolean stopDiretor=false, stopAlt = false;
+		String nome, altNome, altPais, altConjuge;
+		int op_alt;
+		try {
+			do {
+				System.out.println("Qual diretor você deseja modificar?");
+				System.out.println(this.cinema.listarPessoa("diretor"));
+				System.out.println("Digite o nome do diretor:");
+				nome = cmd.nextLine();
+				System.out.println(this.cinema.getAtor(nome).listarDetalhes());
+				do {
+					System.out.println("O que você deseja alterar?");
+					System.out.println("1-Nome\n2-País\n3-Conjugê\n4-Sair");
+					op_alt = cmd.nextInt();
+					cmd.nextLine();
+					switch (op_alt) {
+					case 1:
+						System.out.println("Digite o novo nome do diretor:");
+						altNome = cmd.nextLine();
+						this.cinema.altPessoa("ator", nome, altNome, "nome");
+						nome = altNome;
+						break;
+					case 2:
+						System.out.println("Digite o novo país do diretor:");
+						altPais = cmd.nextLine();
+						this.cinema.altPessoa("ator", nome, altPais, "pais");
+						break;
+					case 3:
+						try {
+							System.out.println(this.cinema.listarTodasPessoas());
+							System.out.println("Digite o nome do novo conjugê do diretor:");
+							altConjuge = cmd.nextLine();
+							this.cinema.altPessoa("ator", nome, altConjuge, "conjuge");
+						}
+						catch(PessoaNaoEncontradaException e) {
+							System.out.println("Erro ao alterar conjugê.");
+						}
+						break;
+					case 4:
+						break;
+					}
+					
+					if (!opcaoRepeat("Diretor " + nome + " modificado.")) { stopAlt = true; }
+				}while(stopAlt == false);
+				saveCinema(cinema);
+				if (!opcaoRepeat("Diretor modificado.")) { stopDiretor = true; }
+
+			} while (stopDiretor == false);
+		} catch (PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	public void excluiDiretores() {
-		
+		boolean stopPessoa=false;
+		String nome, opcao = "Diretor modificado" ;
+		int op_s;
+		try {
+			do {
+				System.out.println("Qual diretor você deseja excluir?");
+				System.out.println(this.cinema.listarPessoa("diretor"));
+				System.out.println("Digite o nome do diretor:");
+				nome = cmd.nextLine();
+				System.out.println(this.cinema.getDiretor(nome).listarDetalhes());
+				System.out.println("Você tem certeza que quer excluir esse diretor? 1-Sim/0-Não");
+				op_s = cmd.nextInt();
+				cmd.nextLine();
+				if(op_s == 1 ) {
+					this.cinema.deletePessoa("diretor", nome);
+				}
+				else {
+					opcao = "Diretor não excluído";
+				}
+				saveCinema(cinema);
+				if (!opcaoRepeat(opcao)) { stopPessoa = true; }
+
+			} while (stopPessoa == false);
+		} catch (PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void addSalas() {

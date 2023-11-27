@@ -79,7 +79,6 @@ public class Cinema implements Serializable{
 		try {
 			f = getFilme(op_filme);
 			if(normalizeString(op).equalsIgnoreCase("addhor")) { 
-				System.out.println("aaas");
 				Horario h;
 				try {
 					h = getHorario(data_h, sala, op_horario);
@@ -107,7 +106,7 @@ public class Cinema implements Serializable{
 		return true;
 	}
 
-	public boolean MudarFilme(String filme, String var, String op) throws GeneroNaoEncontradaException{
+	public boolean MudarFilme(String filme, String var, String op) throws GeneroNaoEncontradaException, PessoaNaoEncontradaException{
 		Filme f = new Filme();
 		try {
 			f = getFilme(filme);
@@ -141,24 +140,40 @@ public class Cinema implements Serializable{
 							else {
 								if(normalizeString(op).equalsIgnoreCase("addator")) { 
 									Ator a;
-									a = getAtor(var);
+									try {
+										a = getAtor(var);
+									} catch (PessoaNaoEncontradaException e) {
+										throw new PessoaNaoEncontradaException();
+									}
 									f.addAtor(a);
 									}
 								else {
 									if(normalizeString(op).equalsIgnoreCase("remator")) { 
 										Ator a;
-										a = getAtor(var);
+										try {
+											a = getAtor(var);
+										} catch (PessoaNaoEncontradaException e) {
+											throw new PessoaNaoEncontradaException();
+										}
 										f.getAtores().remove(a);}
 									else {
 										if(normalizeString(op).equalsIgnoreCase("adddir")) { 
 											Diretor a;
-											a = getDiretor(var);
+											try {
+												a = getDiretor(var);
+											} catch (PessoaNaoEncontradaException e) {
+												throw new PessoaNaoEncontradaException();
+											}
 											f.addDiretor(a);
 											}
 										else {
 											if(normalizeString(op).equalsIgnoreCase("remadir")) { 
 												Diretor a;
-												a = getDiretor(var);
+												try {
+													a = getDiretor(var);
+												} catch (PessoaNaoEncontradaException e) {
+													throw new PessoaNaoEncontradaException();
+												}
 												f.getDiretores().remove(a);}
 											else {
 												return false;
@@ -366,15 +381,14 @@ public class Cinema implements Serializable{
 		
 	}
 
-	public Diretor getDiretor(String nome) {
-		Diretor diretor = new Diretor();
+	public Diretor getDiretor(String nome) throws PessoaNaoEncontradaException {
 		
 		for (Diretor d : this.diretores) {
 			if ((normalizeString(d.getNome())).equals(normalizeString(nome))) {
 				return d;
 			}
 		}
-		return diretor;
+		throw new PessoaNaoEncontradaException();
 	}
 
 	public Horario getHorario(Date data, int sala, String hora) throws HorarioNaoEncontradaException {
@@ -390,15 +404,14 @@ public class Cinema implements Serializable{
 		return this.atores;
 	}
 
-	public Ator getAtor(String nome) {
-		Ator ator = new Ator();
+	public Ator getAtor(String nome) throws PessoaNaoEncontradaException{
 		
 		for (Ator a : this.atores) {
 			if ((normalizeString(a.getNome())).equals(normalizeString(nome))) {
 				return a;
 			}
 		}
-		return ator;
+		throw new PessoaNaoEncontradaException();
 	}
 
 	public Genero getGenero(String nome) throws GeneroNaoEncontradaException {
@@ -417,13 +430,62 @@ public class Cinema implements Serializable{
 		lista.addAll(this.atores);
 		lista.addAll(this.diretores);
 		for( Pessoa p : lista) {
-			System.out.println(p.getNome() + "/" + nome);
 			if((normalizeString(p.getNome())).equals(normalizeString(nome))){
 				return p;
 			}
 		}
 		throw new PessoaNaoEncontradaException();
 
+	}
+	public void deletePessoa(String tipo,String nome) throws PessoaNaoEncontradaException {
+		try {
+		Pessoa p;
+		if(tipo == "ator") {
+			p = new Ator();
+			p = getPessoa(nome);
+			this.atores.remove(p);
+		}
+		else {
+			p = new Diretor();
+			p = getPessoa(nome);
+			this.diretores.remove(p);
+		}	
+		}catch (PessoaNaoEncontradaException e) {
+			throw new PessoaNaoEncontradaException();
+		}
+	}
+	
+	public void altPessoa(String tipo, String nome, String var, String alt) throws PessoaNaoEncontradaException {
+		Pessoa p;
+		if(tipo == "ator") {
+			p = new Ator();
+		}
+		else {
+			p = new Diretor();
+		}
+		
+		try {
+			p = getPessoa(nome);
+			if(normalizeString(alt).equals("nome")) {
+				p.setNome(var);
+			}
+			else {
+				if(normalizeString(alt).equals("pais")) {
+					p.setPaisOrigem(var);
+				}
+				else {
+					if(normalizeString(alt).equals("conjuge")) {
+						p.setConjuge(getPessoa(var));
+					}
+					else {
+						throw new PessoaNaoEncontradaException();
+					}
+				}
+			}
+			
+		} catch (PessoaNaoEncontradaException e) {
+			throw new PessoaNaoEncontradaException();
+		}
 	}
 	
 	public String listarPessoa(String tipo)throws PessoaNaoEncontradaException {
@@ -443,8 +505,14 @@ public class Cinema implements Serializable{
 			}
 			for (Pessoa a : lista) {
 				retorno.append("-\n");
-				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem());
-				
+				retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem() + " ");
+				retorno.append("Conjugê: ");
+				if(a.getConjuge() != null) {
+					retorno.append(a.getConjuge().getNome());
+				}
+				else {
+					retorno.append("Nenhum");
+				}
 				retorno.append("\n");
 	        }
 			retorno.append("-------------------\n");

@@ -37,4 +37,20 @@ public class Pessoa implements Serializable{
 		this.conjuge = conjuge;
 	}
 	
+	public String listarDetalhes() {
+		StringBuilder retorno = new StringBuilder();
+		retorno.append("-------------------\n");
+		retorno.append("-\n");
+		retorno.append("Nome: " + nome + " País: " + paisOrigem + " ");
+		retorno.append("Conjugê: ");
+		if(conjuge != null) {
+			retorno.append(conjuge.getNome());
+		}
+		else {
+			retorno.append("Nenhum");
+		}
+		retorno.append("\n");
+		retorno.append("-------------------\n");retorno.append("-------------------\n");
+		return retorno.toString();
+	}
 }

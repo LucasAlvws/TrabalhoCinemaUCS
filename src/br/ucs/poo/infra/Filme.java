@@ -204,6 +204,38 @@ public class Filme implements Serializable{
 		retorno.append("Descrição: " + this.getDescricao()+ "\n");
 		retorno.append("Gênero: " + this.getGenero().getNome()+ "\n");
 		retorno.append("Duração: " + this.getDuracao() + "\n");
+		if(atores != null) {
+		retorno.append("-------------------Atores\n");
+		for (Pessoa a : atores) {
+			retorno.append("-\n");
+			retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem() + " ");
+			retorno.append("Conjugê: ");
+			if(a.getConjuge() != null) {
+				retorno.append(a.getConjuge().getNome());
+			}
+			else {
+				retorno.append("Nenhum");
+			}
+			retorno.append("\n");
+        }
+		retorno.append("-------------------");
+		}
+		if(diretores != null) {
+		retorno.append("-------------------Diretores\n");
+		for (Pessoa a : diretores) {
+			retorno.append("-\n");
+			retorno.append("Nome: " + a.getNome() + " País: " + a.getPaisOrigem() + " ");
+			retorno.append("Conjugê: ");
+			if(a.getConjuge() != null) {
+				retorno.append(a.getConjuge().getNome());
+			}
+			else {
+				retorno.append("Nenhum");
+			}
+			retorno.append("\n");
+        }
+		retorno.append("-------------------\n");
+		}
 		return retorno.toString();
 	}
 }
