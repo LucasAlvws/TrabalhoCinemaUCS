@@ -1027,10 +1027,49 @@ public class Main {
 		return this.cinema.listarSalas();
 	}
 	public void modificaSalas() {
-		
+		boolean stopSala=false;
+		int sala, altNSala;
+		try {
+			do {
+				System.out.println("Qual sala você deseja modificar?");
+				System.out.println(this.cinema.listarSalas());
+				System.out.println("Digite o numero da sala:");
+				sala = cmd.nextInt();
+				System.out.println("Digite o novo numero da sala:");
+				altNSala = cmd.nextInt();
+				this.cinema.altSala(sala, altNSala);
+				if (!opcaoRepeat("Gênero modificado.")) { stopSala = true; }
+
+			} while (stopSala == false);
+		} catch (SalaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	public void excluiSalas() {
-		
+		boolean stopSala=false;
+		String opcao = "Sala excluída.";
+		int op_s,sala;
+		try {
+			do {
+				System.out.println("Qual sala você deseja excluir?");
+				System.out.println(this.cinema.listarSalas());
+				System.out.println("Digite o numero da sala:");
+				sala = cmd.nextInt();
+				System.out.println("Você tem certeza que quer excluir esse gênero? 1-Sim/0-Não");
+				op_s = cmd.nextInt();
+				cmd.nextLine();
+				if(op_s == 1 ) {
+					this.cinema.deleteSala(sala);
+				}
+				else {
+					opcao = "Gênero não excluído";
+				}
+				if (!opcaoRepeat(opcao)) { stopSala = true; }
+
+			} while (stopSala == false);
+		} catch (SalaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void addHorarios() {

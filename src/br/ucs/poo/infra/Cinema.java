@@ -262,6 +262,26 @@ public class Cinema implements Serializable{
 		}
 	}
 	
+	public void altSala(int sala, int altNSala) throws SalaNaoEncontradaException{
+		Sala s = new Sala();
+		try {
+			s = getSala(sala);
+			s.setNumero(altNSala);
+		} catch (SalaNaoEncontradaException e) {
+			throw new SalaNaoEncontradaException();
+		}
+	}
+	public void deleteSala(int sala) throws SalaNaoEncontradaException {
+		try {
+			Sala s = new Sala();
+			s = getSala(sala);
+			this.salas.remove(s);
+		}catch (SalaNaoEncontradaException e) {
+			throw new SalaNaoEncontradaException();
+		}
+	}
+	
+	
 	public boolean setSala(int num) {
 		Sala sala = new Sala();
 		
