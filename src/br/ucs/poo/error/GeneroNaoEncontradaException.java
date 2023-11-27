@@ -1,7 +1,7 @@
 package br.ucs.poo.error;
 
 public class GeneroNaoEncontradaException extends Exception{
-	private static final String MESSAGE = "Gênero não encontrado, verifique as infos e tente novamente.";
+	private static final String MESSAGE = "Gênero(s) não encontrado.";
 	public GeneroNaoEncontradaException() {
 		super(MESSAGE);
 		// TODO Auto-generated constructor stub

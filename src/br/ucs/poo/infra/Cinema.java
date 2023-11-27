@@ -24,9 +24,6 @@ public class Cinema implements Serializable{
 	private List<Ator> atores;
 	private List<Diretor> diretores;
 	private List<Horario> horarios;
-	public String erroNenhumaPessoa = "Nenhuma Pessoa registrada.\n";
-	public String erroNenhumGenero = "Nenhum Gênero registrado.\n";
-	public String erroNenhumHorario = "Nenhum Horário registrado.\n";
 	public String erroNenhumaSala = "Nenhuma Sala registrada.\n";
 	
 	public Cinema() {
@@ -225,13 +222,13 @@ public class Cinema implements Serializable{
 		return string.toLowerCase().strip();
 	}
 	
-	public String listarGeneros() {
+	public String listarGeneros() throws GeneroNaoEncontradaException{
 		 StringBuilder retorno = new StringBuilder();
 		 retorno.append("-------------------\n");
 		 try {
 			if (this.generos.size() == 0)
 			{
-				retorno.append(erroNenhumGenero);
+				throw new GeneroNaoEncontradaException();
 			}
 			for (Genero gen : this.generos) {
 				retorno.append("-\n");
@@ -241,7 +238,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append(erroNenhumGenero); 
+			 throw new GeneroNaoEncontradaException();
 		}
 		return retorno.toString();
 	 }
@@ -311,13 +308,13 @@ public class Cinema implements Serializable{
 
 	}
 	
-	public String listarSalas() {
+	public String listarSalas() throws SalaNaoEncontradaException{
 		 StringBuilder retorno = new StringBuilder();
 		 retorno.append("-------------------\n");
 		 try {
 			if (salas.size() == 0)
 			{
-				retorno.append(erroNenhumaSala);
+				throw new SalaNaoEncontradaException();
 			}
 			for (Sala s : salas) {
 				retorno.append("-\n");
@@ -326,7 +323,7 @@ public class Cinema implements Serializable{
 			retorno.append("-------------------\n");
 		 }
 		 catch (NullPointerException e) {
-			retorno.append(erroNenhumaSala); 
+			 throw new SalaNaoEncontradaException();
 		}
 		return retorno.toString();
 	 }
@@ -409,7 +406,7 @@ public class Cinema implements Serializable{
 
 	}
 	
-	public String listarPessoa(String tipo) {
+	public String listarPessoa(String tipo)throws PessoaNaoEncontradaException {
 		 StringBuilder retorno = new StringBuilder();
 		 List<Pessoa> lista = new ArrayList<Pessoa>();
 		 if(tipo=="ator") {
@@ -422,7 +419,7 @@ public class Cinema implements Serializable{
 		 try {
 			if (lista.size() == 0)
 			{
-				retorno.append(erroNenhumaPessoa);
+				throw new PessoaNaoEncontradaException();
 			}
 			for (Pessoa a : lista) {
 				retorno.append("-\n");
@@ -434,12 +431,12 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append(erroNenhumaPessoa); 
+			 throw new PessoaNaoEncontradaException(); 
 		}
 		return retorno.toString();
 	 }
 	
-	public String listarTodasPessoas() {
+	public String listarTodasPessoas() throws PessoaNaoEncontradaException{
 		 StringBuilder retorno = new StringBuilder();
 		 List<Pessoa> lista = new ArrayList<Pessoa>();
 		 lista.addAll(this.atores);
@@ -448,7 +445,7 @@ public class Cinema implements Serializable{
 		 try {
 			if (lista.size() == 0)
 			{
-				retorno.append(erroNenhumaPessoa);
+				throw new PessoaNaoEncontradaException();
 			}
 			for (Pessoa a : lista) {
 				retorno.append("-\n");
@@ -465,7 +462,7 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append(erroNenhumaPessoa); 
+			 throw new PessoaNaoEncontradaException();
 		}
 		return retorno.toString();
 	 }
@@ -483,7 +480,7 @@ public class Cinema implements Serializable{
 		this.horarios.add(hora);
 	}
 	
-	public String listarHorarios() {
+	public String listarHorarios() throws HorarioNaoEncontradaException {
 		 StringBuilder retorno = new StringBuilder();
 		 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		 String dataFormatada;
@@ -491,7 +488,7 @@ public class Cinema implements Serializable{
 		 try {
 			if (this.horarios.size() == 0)
 			{
-				retorno.append(erroNenhumHorario);
+				throw new HorarioNaoEncontradaException();
 			}
 			for (Horario h : this.horarios) {
 				dataFormatada = formato.format(h.getData());
@@ -502,9 +499,47 @@ public class Cinema implements Serializable{
 			
 		 }
 		 catch (NullPointerException e) {
-			retorno.append(erroNenhumHorario); 
+			 throw new HorarioNaoEncontradaException(); 
 		}
 		return retorno.toString();
 	 }
 	
+	public void altHorario(Date data, int sala, String horario ,Date var) throws HorarioNaoEncontradaException{
+		Horario h = new Horario();
+		try {
+			h = getHorario(data, sala, horario);
+			h.setData(var);
+		} catch (HorarioNaoEncontradaException e) {
+			throw new HorarioNaoEncontradaException();
+		}
+	}
+	public void altHorario(Date data, int sala, String horario ,Sala var)throws HorarioNaoEncontradaException {
+		Horario h = new Horario();
+		try {
+			h = getHorario(data, sala, horario);
+			h.setSala(var);
+		} catch (HorarioNaoEncontradaException e) {
+			throw new HorarioNaoEncontradaException();
+		}
+	}
+	public void altHorario(Date data, int sala, String horario ,String var)throws HorarioNaoEncontradaException {
+		Horario h = new Horario();
+		try {
+			h = getHorario(data, sala, horario);
+			h.setHorario(var);
+		} catch (HorarioNaoEncontradaException e) {
+			throw new HorarioNaoEncontradaException();
+		}
+	}
+	
+	
+	public void deleteHorario(Date data, int sala, String horario) throws HorarioNaoEncontradaException {
+		try {
+			Horario h = new Horario();
+			h = getHorario(data, sala, horario);
+			this.horarios.remove(h);
+		}catch (HorarioNaoEncontradaException e) {
+			throw new HorarioNaoEncontradaException();
+		}
+	}
 }

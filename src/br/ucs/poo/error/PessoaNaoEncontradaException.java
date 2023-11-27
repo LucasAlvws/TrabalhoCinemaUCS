@@ -1,7 +1,7 @@
 package br.ucs.poo.error;
 
 public class PessoaNaoEncontradaException extends Exception{
-	private static final String MESSAGE = "Pessoa não encontrada, verifique o nome dela e tente novamente.";
+	private static final String MESSAGE = "Pessoa(s) não encontrada.";
 	public PessoaNaoEncontradaException() {
 		super(MESSAGE);
 		// TODO Auto-generated constructor stub

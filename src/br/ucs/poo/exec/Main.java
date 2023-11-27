@@ -453,16 +453,11 @@ public class Main {
 
 		// GET ATORES ===================================================================
 		List<Ator> atores_select = null;
-		String strAtores = listarAtores();
-		if (strAtores.contains(this.cinema.erroNenhumaPessoa)) {
-			System.out.println(strAtores);
-		}
-		else
-		{
-			atores_select = new ArrayList<Ator>();
+		System.out.println("Adicionar Ator: ");
+		atores_select = new ArrayList<Ator>();
+		try {
 			do {
-				System.out.println("Adicionar Ator: ");
-				System.out.println(strAtores);
+				System.out.println(this.cinema.listarPessoa("ator"));
 				System.out.println("Digite o nome do Ator: ");
 				String ator_str = cmd.nextLine();
 				Ator ator = this.cinema.getAtor(ator_str);
@@ -477,50 +472,41 @@ public class Main {
 				}
 			} while (stopAtor == false);
 		}
+		catch(PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 
 		// GET GENERO ===================================================================
 		Genero gen = null;
-		String strGeneros = listarGenero();
-		if (strGeneros.contains(this.cinema.erroNenhumGenero)) {
-			System.out.println(strGeneros);
-		}
-		else
-		{
+		try {
 			do {
 				System.out.println("Adicionar gênero: ");
-				System.out.println(strGeneros);
+				System.out.println(this.cinema.listarGeneros());
 				System.out.println("Digite o nome do gênero: ");
 				String genero = cmd.nextLine();
 				try {
-					gen = this.cinema.getGenero(genero);
+				gen = this.cinema.getGenero(genero);
+				stopGenero = true;
 				} catch (GeneroNaoEncontradaException e) {
-					System.out.println(e.getMessage());
+					System.out.println("Não existe um gênero com esse nome, por favor escolha um nome válido.");
 				}
-		
-				if (gen.getNome() != gen.semNomeStr)
-				{			
-					stopGenero = true;
-				}
-				else 
-				{
-					typeError("Não existe um gênero com esse nome, por favor escolha um nome válido.");
-				}
-			} while (stopGenero == false);
+				
+			}
+			 while (stopGenero == false);
+		} catch (GeneroNaoEncontradaException e) {
+			System.out.println(e.getMessage());
 		}
+		
+		
 
 		// GET DIRETORES ===================================================================
 
 		List<Diretor> diretores_select = null;
-		String strDiretores = listarDiretores();
-		if (strDiretores.contains(this.cinema.erroNenhumaPessoa)) {
-			System.out.println(strDiretores);
-		}
-		else
-		{	
-			diretores_select = new ArrayList<Diretor>();
+		diretores_select = new ArrayList<Diretor>();
+		System.out.println("Adicionar Diretor: ");
+		try {
 			do {
-				System.out.println("Adicionar Diretor: ");
-				System.out.println(strDiretores);
+				System.out.println(this.cinema.listarPessoa("diretor"));
 				System.out.println("Digite o nome do Diretor: ");
 				String ator_str = cmd.nextLine();
 				Diretor diretor = this.cinema.getDiretor(ator_str);
@@ -535,19 +521,18 @@ public class Main {
 				}
 			} while (stopDiretor == false);
 		}
+		catch (PessoaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 
 		// GET HORÁRIOS ===================================================================
 		List<Horario> horarios_select = null;
 		String strHorarios = listarHorarios();
-		if (strHorarios.contains(this.cinema.erroNenhumHorario)) {
-			System.out.println(strHorarios);
-		}
-		else
-		{
-			horarios_select = new ArrayList<Horario>();
+		horarios_select = new ArrayList<Horario>();
+		try {
 			do {
 				System.out.println("Adicionar Horário: ");
-				System.out.println(strHorarios);
+				System.out.println(this.cinema.listarHorarios());
 				Date data = getDateValidated("Data");
 				System.out.println("N° Sala: ");
 				int sala = cmd.nextInt();	
@@ -564,6 +549,9 @@ public class Main {
 				}
 				if (!opcaoRepeat("Horário adicionado.")) { stopHorario = true; }
 			} while (stopHorario == false);
+		}
+		catch(HorarioNaoEncontradaException e) {
+			System.out.println("Nenhum horário registrado.");
 		}
 
 
@@ -636,11 +624,15 @@ public class Main {
 						op = cmd.nextInt();
 						cmd.nextLine();
 						if(op == 1) {
-							System.out.println(this.cinema.listarPessoa("ator"));
-							System.out.println("Digite o nome do ator que você quer adicionar");
-							nome_ator = cmd.nextLine();
-							tipo = "Ator";
-							altObj(op_filme, nome_ator, tipo, "addator");
+							try {
+								System.out.println(this.cinema.listarPessoa("ator"));
+								System.out.println("Digite o nome do ator que você quer adicionar");
+								nome_ator = cmd.nextLine();
+								tipo = "Ator";
+								altObj(op_filme, nome_ator, tipo, "addator");
+							} catch (PessoaNaoEncontradaException e) {
+								System.out.println(e.getMessage());
+							}
 							break;
 						}
 						if(op == 2) {
@@ -669,11 +661,15 @@ public class Main {
 						op = cmd.nextInt();
 						cmd.nextLine();
 						if(op == 1) {
-							System.out.println(this.cinema.listarPessoa("diretor"));
-							System.out.println("Digite o nome do diretor que você quer adicionar");
-							nome_dir = cmd.nextLine();
-							tipo = "Diretor";
-							altObj(op_filme, nome_dir, tipo, "adddir");
+							try {
+								System.out.println(this.cinema.listarPessoa("diretor"));
+								System.out.println("Digite o nome do diretor que você quer adicionar");
+								nome_dir = cmd.nextLine();
+								tipo = "Diretor";
+								altObj(op_filme, nome_dir, tipo, "adddir");
+							} catch (PessoaNaoEncontradaException e) {
+								System.out.println(e.getMessage());
+							}
 							break;
 						}
 						if(op == 2) {
@@ -700,20 +696,24 @@ public class Main {
 						op = cmd.nextInt();
 						cmd.nextLine();
 						if(op == 1) {
-							System.out.println(this.cinema.listarHorarios());
-							Date data_h = getDateValidated("Data");
-							System.out.println("N° Sala: ");
-							int sala = cmd.nextInt();	
-							cmd.nextLine();
-							System.out.println("Horário: ");
-							String op_horario = cmd.nextLine();
-							tipo = "Horário";
-							
-							if(this.cinema.MudarHor(op_filme,tipo, data_h, sala, op_horario, "addhor")) {
-								System.out.println(tipo + " modificado.");
-							}
-							else {
-								System.out.println("Erro ao modificar o "+ tipo +".");
+							try {
+								System.out.println(this.cinema.listarHorarios());
+								Date data_h = getDateValidated("Data");
+								System.out.println("N° Sala: ");
+								int sala = cmd.nextInt();	
+								cmd.nextLine();
+								System.out.println("Horário: ");
+								String op_horario = cmd.nextLine();
+								tipo = "Horário";
+								
+								if(this.cinema.MudarHor(op_filme,tipo, data_h, sala, op_horario, "addhor")) {
+									System.out.println(tipo + " modificado.");
+								}
+								else {
+									System.out.println("Erro ao modificar o "+ tipo +".");
+								}
+							} catch (HorarioNaoEncontradaException e) {
+								System.out.println(e.getMessage());
 							}
 							break;
 						}
@@ -797,6 +797,7 @@ public class Main {
 				else {
 					opcao = "Filme não excluído";
 				}
+				saveCinema(cinema);
 				if (!opcaoRepeat(opcao)) { stopFilme = true; }
 	
 			} while (stopFilme == false);
@@ -833,7 +834,11 @@ public class Main {
 	public String listarGenero() {
 		System.out.println("Lista de Gêneros:");
 		
-		return this.cinema.listarGeneros();
+		try {
+			return this.cinema.listarGeneros();
+		} catch (GeneroNaoEncontradaException e) {
+			return e.getMessage();
+		}
 	}
 	public void modificaGenero() {
 		boolean stopGenero=false;
@@ -849,7 +854,7 @@ public class Main {
 			
 				this.cinema.altGenero(nome, altNome);
 			
-		
+				saveCinema(cinema);
 				if (!opcaoRepeat("Gênero modificado.")) { stopGenero = true; }
 
 			} while (stopGenero == false);
@@ -876,6 +881,7 @@ public class Main {
 				else {
 					opcao = "Gênero não excluído";
 				}
+				saveCinema(cinema);
 				if (!opcaoRepeat(opcao)) { stopGenero = true; }
 
 			} while (stopGenero == false);
@@ -903,20 +909,14 @@ public class Main {
 				cmd.nextLine();
 				if(opcaoConjuge != 0) {
 					System.out.println("Lista de Pessoas: ");
-					if(this.cinema.listarTodasPessoas().contains(this.cinema.erroNenhumaPessoa)) {
-						System.out.println(this.cinema.listarTodasPessoas());
-					}
-					else {
+					try {
 						System.out.println(this.cinema.listarTodasPessoas());
 						System.out.println("Digite o nome do conjuge: ");
 						conjuge = cmd.nextLine();
-						try {
-							pconjuge = this.cinema.getPessoa(conjuge);
-						} catch (PessoaNaoEncontradaException e) {
-							System.out.println(e.getMessage());
-						}
+						pconjuge = this.cinema.getPessoa(conjuge);
+					} catch (PessoaNaoEncontradaException e) {
+						System.out.println(e.getMessage());
 					}
-					
 				}
 				this.cinema.setPessoa(nome, pais, "ator", pconjuge);
 				saveCinema(cinema);
@@ -931,8 +931,11 @@ public class Main {
 	}
 	public String listarAtores() {
 		System.out.println("Lista de Atores:");
-		String str = this.cinema.listarPessoa("ator");
-		return str;
+		try {
+			return this.cinema.listarPessoa("ator");
+		} catch (PessoaNaoEncontradaException e) {
+			return e.getMessage();
+		}
 	}
 	public void modificaAtores() {
 		
@@ -960,20 +963,14 @@ public class Main {
 				cmd.nextLine();
 				if(opcaoConjuge != 0) {
 					System.out.println("Lista de Pessoas: ");
-					if(this.cinema.listarTodasPessoas().contains(this.cinema.erroNenhumaPessoa)) {
-						System.out.println(this.cinema.listarTodasPessoas());
-					}
-					else {
+					try {
 						System.out.println(this.cinema.listarTodasPessoas());
 						System.out.println("Digite o nome do conjuge: ");
 						conjuge = cmd.nextLine();
-						try {
-							pconjuge = this.cinema.getPessoa(conjuge);
-						} catch (PessoaNaoEncontradaException e) {
-							System.out.println(e.getMessage());
-						}
+						pconjuge = this.cinema.getPessoa(conjuge);
+					} catch (PessoaNaoEncontradaException e) {
+						System.out.println(e.getMessage());
 					}
-					
 				}
 				this.cinema.setPessoa(nome, pais, "diretor", pconjuge);
 				
@@ -989,8 +986,11 @@ public class Main {
 	}
 	public String listarDiretores() {
 		System.out.println("Lista de Diretores:");
-
-		return this.cinema.listarPessoa("diretor");
+		try {
+			return this.cinema.listarPessoa("diretor");
+		} catch (PessoaNaoEncontradaException e) {
+			return e.getMessage();
+		}
 	}
 	public void modificaDiretores() {
 		
@@ -1024,7 +1024,11 @@ public class Main {
 	}
 	public String listarSalas() {
 		System.out.println("Lista de Salas:");
-		return this.cinema.listarSalas();
+		try {
+			return this.cinema.listarSalas();
+		} catch (SalaNaoEncontradaException e) {
+			return e.getMessage();
+		}
 	}
 	public void modificaSalas() {
 		boolean stopSala=false;
@@ -1038,6 +1042,7 @@ public class Main {
 				System.out.println("Digite o novo numero da sala:");
 				altNSala = cmd.nextInt();
 				this.cinema.altSala(sala, altNSala);
+				saveCinema(cinema);
 				if (!opcaoRepeat("Gênero modificado.")) { stopSala = true; }
 
 			} while (stopSala == false);
@@ -1064,6 +1069,7 @@ public class Main {
 				else {
 					opcao = "Gênero não excluído";
 				}
+				saveCinema(cinema);
 				if (!opcaoRepeat(opcao)) { stopSala = true; }
 
 			} while (stopSala == false);
@@ -1080,23 +1086,22 @@ public class Main {
 			do {
 				System.out.println("Add Horarios:");
 				System.out.println("Lista de Salas:");
-				System.out.println(this.cinema.listarSalas());
-				System.out.println("Digite o número de uma das salas acima: ");
-				num = cmd.nextInt();
-				cmd.nextLine();
-				System.out.println("Informe a data da sessão: ");
-				data = cmd.nextLine();
-				System.out.println("Informe o horário da sessão: ");
-				hora = cmd.nextLine();
-				Sala sala =  new Sala();
 				try {
+					System.out.println(this.cinema.listarSalas());
+					System.out.println("Digite o número de uma das salas acima: ");
+					num = cmd.nextInt();
+					cmd.nextLine();
+					System.out.println("Informe a data da sessão: ");
+					data = cmd.nextLine();
+					System.out.println("Informe o horário da sessão: ");
+					hora = cmd.nextLine();
+					Sala sala =  new Sala();
 					sala = this.cinema.getSala(num);
-				} catch (SalaNaoEncontradaException e) {
-					System.out.println(e.getMessage());
-				}
-				try {
 					this.cinema.setHorario(data, sala , hora);
 				} catch (DataErradaException e) {
+					System.out.println(e.getMessage());
+				}
+				catch (SalaNaoEncontradaException e) {
 					System.out.println(e.getMessage());
 				}
 				
@@ -1111,14 +1116,96 @@ public class Main {
 	}
 	public String listarHorarios() {
 		System.out.println("Lista de Horários:");
-
-		return this.cinema.listarHorarios();
+		try {
+			return this.cinema.listarHorarios();
+		} catch (HorarioNaoEncontradaException e) {
+			return e.getMessage();
+		}
 	}
 	public void modificaHorarios() {
-		
+		boolean stopHor=false;
+		int op_mod;
+		try {
+			do {
+				System.out.println("Qual horário você deseja modificar?");
+				System.out.println(this.cinema.listarHorarios());
+				Date data = getDateValidated("Data");
+				System.out.println("N° Sala: ");
+				int sala = cmd.nextInt();	
+				cmd.nextLine();
+				System.out.println("Horário: ");
+				String op_horario = cmd.nextLine();
+				System.out.println(this.cinema.getHorario(data, sala, op_horario).listarDetalhes());
+				System.out.println("O que você deseja modificar: ");
+				System.out.println("1-Data\n2-Sala\n3-Hora\n4-Cancelar");
+				op_mod = cmd.nextInt();
+				cmd.nextLine();
+				switch (op_mod) {
+				case 1:
+					Date data_nova = getDateValidated("Nova data");
+					this.cinema.altHorario(data, sala, op_horario,	data_nova);
+					data = data_nova;
+					break;
+				case 2:
+					System.out.println(this.cinema.listarSalas());
+					System.out.println("Novo N° Sala: ");
+					int sala_nova = cmd.nextInt();	
+					cmd.nextLine();
+					this.cinema.altHorario(data, sala, op_horario, this.cinema.getSala(sala_nova));
+					sala = sala_nova;
+					break;
+				case 3:
+					System.out.println("Novo Horário: ");
+					String novo_op_horario = cmd.nextLine();
+					this.cinema.altHorario(data, sala, op_horario, novo_op_horario);
+					op_horario = novo_op_horario;
+					break;
+				case 4:
+					break;
+				}
+				saveCinema(cinema);
+				if (!opcaoRepeat("Horário modificado.")) { stopHor = true; }
+
+			} while (stopHor == false);
+		} 
+		catch (HorarioNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
+		catch (SalaNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	public void excluiHorarios() {
-		
+		boolean stopHor=false;
+		String opcao = "Horário excluída.";
+		int op_s;
+		try {
+			do {
+				System.out.println("Qual horário você deseja excluir?");
+				System.out.println(this.cinema.listarHorarios());
+				Date data = getDateValidated("Data");
+				System.out.println("N° Sala: ");
+				int sala = cmd.nextInt();	
+				cmd.nextLine();
+				System.out.println("Horário: ");
+				String op_horario = cmd.nextLine();
+				System.out.println(this.cinema.getHorario(data, sala, op_horario).listarDetalhes());
+				System.out.println("Você tem certeza que quer excluir esse gênero? 1-Sim/0-Não");
+				op_s = cmd.nextInt();
+				cmd.nextLine();
+				if(op_s == 1 ) {
+					this.cinema.deleteHorario(data, sala, op_horario);
+				}
+				else {
+					opcao = "Horário não excluído";
+				}
+				saveCinema(cinema);
+				if (!opcaoRepeat(opcao)) { stopHor = true; }
+
+			} while (stopHor == false);
+		} catch (HorarioNaoEncontradaException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	 
