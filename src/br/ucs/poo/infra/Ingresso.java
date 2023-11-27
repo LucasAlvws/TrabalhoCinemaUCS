@@ -7,9 +7,9 @@ public class Ingresso implements Serializable{
 	private String nomeComprador;
 	private Date data;
 	private String celular;
-	private float preco;
+	private static final float preco = 20;
 	private boolean meiaEntrada;
-	private List<Assento> assentos;
+	private Assento assento;
 	private Horario horario;
 	
 	
@@ -19,8 +19,12 @@ public class Ingresso implements Serializable{
 	public void setHorario(Horario horario) {
 		this.horario = horario;
 	}
-	public List<Assento> getAssentos() {
-		return assentos;
+	public Assento getAssento() {
+		return assento;
+	}
+
+	public void setAssento(Assento asss) {
+		this.assento = asss;
 	}
 	/*public void setAssentos(List<Assento> assentos) {
 		this.assentos = assentos;
@@ -43,12 +47,11 @@ public class Ingresso implements Serializable{
 	public void setCelular(String celular) {
 		this.celular = celular;
 	}
+
 	public float getPreco() {
 		return preco;
 	}
-	public void setPreco(float preco) {
-		this.preco = preco;
-	}
+
 	public boolean isMeiaEntrada() {
 		return meiaEntrada;
 	}

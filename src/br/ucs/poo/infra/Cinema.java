@@ -24,6 +24,7 @@ public class Cinema implements Serializable{
 	private List<Ator> atores;
 	private List<Diretor> diretores;
 	private List<Horario> horarios;
+	private List<Ingresso> ingressos;
 	public String erroNenhumaSala = "Nenhuma Sala registrada.\n";
 	
 	public Cinema() {
@@ -33,6 +34,7 @@ public class Cinema implements Serializable{
 		this.atores = new ArrayList<Ator>();
 		this.diretores = new ArrayList<Diretor>();
 		this.horarios = new ArrayList<Horario>();
+		this.ingressos = new ArrayList<Ingresso>();
 		
 	}
 	
@@ -210,6 +212,8 @@ public class Cinema implements Serializable{
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
+
+	
 	
 	public void setGeneros(String nome) {
 		Genero gen = new Genero();
@@ -294,6 +298,22 @@ public class Cinema implements Serializable{
 		else {
 			sala.setNumero(num);
 			this.salas.add(sala);
+
+			List<Assento> asss = new ArrayList<Assento>();
+
+			for (int i = 1; i <= sala.getNumeroFileira(); i++) {
+				for (int ii = 1; ii <= sala.getNPorFileira(); ii++) {
+					Assento new_asseto = new Assento();
+					new_asseto.setFileira(i);
+					new_asseto.setNumero(ii);
+					new_asseto.setSala(sala);
+
+					asss.add(new_asseto);
+				}	
+			}
+			sala.setAssentos(asss);
+			
+			
 			return true;
 		}
 	}
@@ -467,17 +487,20 @@ public class Cinema implements Serializable{
 		return retorno.toString();
 	 }
 	
-	public void setHorario(String dataString, Sala sala, String horario) throws DataErradaException{
+	public void setHorario(Date data, Sala sala, String horario) throws DataErradaException{
 		Horario hora = new Horario();		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-            hora.setData(sdf.parse(dataString));
-        } catch (ParseException e) {
-            throw new DataErradaException();
-        }
+		hora.setData(data);
 		hora.setHorario(horario);
 		hora.setSala(sala);
 		this.horarios.add(hora);
+	}
+
+	public void setIngresso(Ingresso i) {
+		this.ingressos.add(i);
+	}
+
+	public List<Ingresso> getIngressos() {
+		return this.ingressos;
 	}
 	
 	public String listarHorarios() throws HorarioNaoEncontradaException {

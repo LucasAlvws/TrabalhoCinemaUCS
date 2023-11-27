@@ -3,7 +3,8 @@ package br.ucs.poo.infra;
 import java.io.Serializable;
 
 public class Assento implements Serializable{
-	private String coordenada;
+	private int fileira;
+	private int numero;
 	private Sala sala;
 	
 	
@@ -15,12 +16,20 @@ public class Assento implements Serializable{
 		this.sala = sala;
 	}
 
-	public String getCoordenada() {
-		return coordenada;
+	public int getFileira() {
+		return fileira;
 	}
 
-	public void setCoordenada(String coordenada) {
-		this.coordenada = coordenada;
+	public void setFileira(int fileira) {
+		this.fileira = fileira;
+	}
+
+	public int getNumero() {
+		return numero;
+	}
+
+	public void setNumero(int n) {
+		this.numero = n;
 	}
 	
 }
