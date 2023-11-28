@@ -20,6 +20,7 @@ public class Filme implements Serializable{
 	private int duracao;
 	private List<Ator> atores;
 	private List<Diretor> diretores;
+	private List<Ingresso> ingressos;
 	private Genero genero;
 	private List<Horario> horarios;
 	
@@ -27,6 +28,7 @@ public class Filme implements Serializable{
 		this.atores =  new ArrayList<Ator>();
 		this.diretores = new ArrayList<Diretor>();
 		this.horarios = new ArrayList<Horario>();
+		this.ingressos = new ArrayList<Ingresso>();
 	}
 	
 	public Filme(String nome, Date data, String desc, int duracao, List<Ator> atores, List<Diretor> diretores, List<Horario> horarios, Genero genero) {
@@ -39,6 +41,14 @@ public class Filme implements Serializable{
 		this.diretores = diretores;
 		this.horarios = horarios;
 		this.genero = genero;
+	}
+
+	public void setIngresso(Ingresso i) {
+		ingressos.add(i);
+	}
+
+	public int getNIngressos() {
+		return ingressos.size();
 	}
 	
 	public Genero getGenero() {
@@ -204,6 +214,7 @@ public class Filme implements Serializable{
 		retorno.append("Descrição: " + this.getDescricao()+ "\n");
 		retorno.append("Gênero: " + this.getGenero().getNome()+ "\n");
 		retorno.append("Duração: " + this.getDuracao() + "\n");
+		retorno.append("Nº de ingressos vendidos " + this.getNIngressos() + "\n");
 		if(atores != null) {
 		retorno.append("-------------------Atores\n");
 		for (Pessoa a : atores) {

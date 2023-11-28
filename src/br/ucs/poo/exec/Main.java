@@ -1,6 +1,7 @@
 package br.ucs.poo.exec;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -277,14 +278,20 @@ public class Main {
 
 
 	public void filmesExibicao() {
+
+		Date data_um = getDateValidated("primeira data");
+
+		Date data_dois = getDateValidated("segunda data");
+
 		String hora_um = getHoraValidated("primeiro horário");
 
-		String hora_dois = getHoraValidated("primeiro horário");
+		String hora_dois = getHoraValidated("segundo horário");
 
 		int minutos_um = (parseInt(hora_um.substring(0, 2)) * 60) + parseInt(hora_um.substring(3, 5));
 		
 		int minutos_dois = (parseInt(hora_dois.substring(0, 2)) * 60) + parseInt(hora_dois.substring(3, 5));
 		
+		List<Filme> filmes_exib = new ArrayList<Filme>();
 
 		for (Filme f : this.cinema.getFilmes())
 		{
@@ -292,7 +299,7 @@ public class Main {
 			for (Horario h : f.getHorarios())
 			{	
 				int h_min_geral = (h.getHora()* 60) + h.getMinutos();
-				if (minutos_um < h_min_geral && h_min_geral < minutos_dois)
+				if ((h.getData().after(data_um) && h.getData().before(data_dois)) && (minutos_um < h_min_geral && h_min_geral < minutos_dois))
 				{
 					exibido = true;
 				}
@@ -300,9 +307,16 @@ public class Main {
 
 			if (exibido == true)
 			{
-				System.out.println(f.listarDetalhes());
+				filmes_exib.add(f);
 			}
 		}
+		filmes_exib.sort(Comparator.comparing(Filme::getNIngressos).reversed());
+
+		for (Filme f : filmes_exib)
+		{
+			System.out.println(f.listarDetalhes());
+		}
+
 	}
 
 	public void altObj(String filme,String var,String tipo) throws GeneroNaoEncontradaException, PessoaNaoEncontradaException {
@@ -479,6 +493,7 @@ public class Main {
 		ing.setAssento(assento);
 		ing.setHorario(hor_obj);
 		
+		f.setIngresso(ing);
 		this.cinema.setIngresso(ing);
 
 		saveCinema(cinema);
