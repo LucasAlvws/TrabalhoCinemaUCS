@@ -597,13 +597,13 @@ public class Main {
 					throw new Exception();
 				}
 
-				if (parseInt(hora.substring(0, 2)) > 24)
+				if (parseInt(hora.substring(0, 2)) > 23)
 				{
 					horaTrue = false;
 					throw new Exception();
 				}
 
-				if (parseInt(hora.substring(3, 5)) > 60)
+				if (parseInt(hora.substring(3, 5)) > 59)
 				{
 					horaTrue = false;
 					throw new Exception();
