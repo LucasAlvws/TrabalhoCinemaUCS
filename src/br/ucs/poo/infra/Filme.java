@@ -246,6 +246,19 @@ public class Filme implements Serializable{
 			retorno.append("\n");
         }
 		retorno.append("-------------------\n");
+		 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		 String dataFormatada;
+			if (horarios!= null)
+			{
+				retorno.append("-------------------Horários\n");
+			for (Horario h : this.horarios) {
+				dataFormatada = formato.format(h.getData());
+				retorno.append("-\n");
+				retorno.append("Código: "+ h.getCodigo() +" Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
+	        }
+			retorno.append("-------------------\n");
+			}
+		
 		}
 		return retorno.toString();
 	}

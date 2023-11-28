@@ -1314,7 +1314,7 @@ public class Main {
 				System.out.println(this.cinema.listarPessoa("diretor"));
 				System.out.println("Digite o nome do diretor:");
 				nome = cmd.nextLine();
-				System.out.println(this.cinema.getAtor(nome).listarDetalhes());
+				System.out.println(this.cinema.getDiretor(nome).listarDetalhes());
 				do {
 					System.out.println("O que você deseja alterar?");
 					System.out.println("1-Nome\n2-País\n3-Conjugê\n4-Sair");
@@ -1448,14 +1448,14 @@ public class Main {
 				System.out.println(this.cinema.listarSalas());
 				System.out.println("Digite o numero da sala:");
 				sala = cmd.nextInt();
-				System.out.println("Você tem certeza que quer excluir esse gênero? 1-Sim/0-Não");
+				System.out.println("Você tem certeza que quer excluir essa sala? 1-Sim/0-Não");
 				op_s = cmd.nextInt();
 				cmd.nextLine();
 				if(op_s == 1 ) {
 					this.cinema.deleteSala(sala);
 				}
 				else {
-					opcao = "Gênero não excluído";
+					opcao = "Sala não excluída.";
 				}
 				saveCinema(cinema);
 				if (!opcaoRepeat(opcao)) { stopSala = true; }
