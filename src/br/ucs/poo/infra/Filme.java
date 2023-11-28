@@ -135,7 +135,7 @@ public class Filme implements Serializable{
 			for (Horario h : this.horarios) {
 				dataFormatada = formato.format(h.getData());
 				retorno.append("-\n");
-				retorno.append("Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
+				retorno.append("Código: "+ h.getCodigo() +" Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
 	        }
 			retorno.append("-------------------\n");
 			

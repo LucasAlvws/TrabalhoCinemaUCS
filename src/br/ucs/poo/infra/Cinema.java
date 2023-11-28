@@ -47,6 +47,13 @@ public class Cinema implements Serializable{
 		Filme filme = new Filme(nome, data, desc, duracao,atores, diretores, horarios, genero);
 		this.filmes.add(filme);
 	}
+
+	public List<Filme> getFilmes()
+	{
+		return this.filmes;
+	}
+
+
 	public String listarFilmes() {
 		 StringBuilder retorno = new StringBuilder();
 		 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -74,14 +81,14 @@ public class Cinema implements Serializable{
 		}
 	}
 	
-	public boolean MudarHor(String op_filme,String tipo,Date data_h,int sala, String op_horario, String op) {
+	public boolean MudarHor(String op_filme,String tipo,int codigo, String op) {
 		Filme f = new Filme();
 		try {
 			f = getFilme(op_filme);
 			if(normalizeString(op).equalsIgnoreCase("addhor")) { 
 				Horario h;
 				try {
-					h = getHorario(data_h, sala, op_horario);
+					h = getHorario(codigo);
 					f.addHorario(h);
 				} catch (HorarioNaoEncontradaException e) {
 					e.printStackTrace();
@@ -91,7 +98,7 @@ public class Cinema implements Serializable{
 			if(normalizeString(op).equalsIgnoreCase("remhor")) { 
 				Horario h;
 				try {
-					h = getHorario(data_h, sala, op_horario);
+					h = getHorario(codigo);
 					f.getHorarios().remove(h);
 				} catch (HorarioNaoEncontradaException e) {
 					e.printStackTrace();
@@ -391,9 +398,9 @@ public class Cinema implements Serializable{
 		throw new PessoaNaoEncontradaException();
 	}
 
-	public Horario getHorario(Date data, int sala, String hora) throws HorarioNaoEncontradaException {
+	public Horario getHorario(int codigo) throws HorarioNaoEncontradaException {
 		for (Horario d : this.horarios) {
-			if (d.getData().equals(data) && d.getSala().getNumero() == sala && normalizeString(d.getHorario()).equals(normalizeString(hora)) ) {
+			if (d.getCodigo() == codigo) {
 				return d;
 			}
 		}
@@ -560,6 +567,7 @@ public class Cinema implements Serializable{
 		hora.setData(data);
 		hora.setHorario(horario);
 		hora.setSala(sala);
+		hora.setCodigo(horarios.size());
 		this.horarios.add(hora);
 	}
 
@@ -584,7 +592,7 @@ public class Cinema implements Serializable{
 			for (Horario h : this.horarios) {
 				dataFormatada = formato.format(h.getData());
 				retorno.append("-\n");
-				retorno.append("Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
+				retorno.append("Código: "+ h.getCodigo() +" Sala N°: " + h.getSala().getNumero() + " Data: " + dataFormatada + " Horário: " + h.getHorario() + "\n");
 	        }
 			retorno.append("-------------------\n");
 			
@@ -593,44 +601,9 @@ public class Cinema implements Serializable{
 			 throw new HorarioNaoEncontradaException(); 
 		}
 		return retorno.toString();
-	 }
-	
-	public void altHorario(Date data, int sala, String horario ,Date var) throws HorarioNaoEncontradaException{
-		Horario h = new Horario();
-		try {
-			h = getHorario(data, sala, horario);
-			h.setData(var);
-		} catch (HorarioNaoEncontradaException e) {
-			throw new HorarioNaoEncontradaException();
-		}
-	}
-	public void altHorario(Date data, int sala, String horario ,Sala var)throws HorarioNaoEncontradaException {
-		Horario h = new Horario();
-		try {
-			h = getHorario(data, sala, horario);
-			h.setSala(var);
-		} catch (HorarioNaoEncontradaException e) {
-			throw new HorarioNaoEncontradaException();
-		}
-	}
-	public void altHorario(Date data, int sala, String horario ,String var)throws HorarioNaoEncontradaException {
-		Horario h = new Horario();
-		try {
-			h = getHorario(data, sala, horario);
-			h.setHorario(var);
-		} catch (HorarioNaoEncontradaException e) {
-			throw new HorarioNaoEncontradaException();
-		}
 	}
 	
-	
-	public void deleteHorario(Date data, int sala, String horario) throws HorarioNaoEncontradaException {
-		try {
-			Horario h = new Horario();
-			h = getHorario(data, sala, horario);
-			this.horarios.remove(h);
-		}catch (HorarioNaoEncontradaException e) {
-			throw new HorarioNaoEncontradaException();
-		}
+	public void deleteHorario(Horario h) {
+		this.horarios.remove(h);
 	}
 }

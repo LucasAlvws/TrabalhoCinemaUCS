@@ -117,7 +117,7 @@ public class Main {
 				pesquisaFilme();
 				break;
 			case 9 :
-				comprarIngresso();
+				filmesExibicao();
 				break;
 			case 10:
 				System.out.println("Deseja realmente sair? '1-Sim/2-Não'");
@@ -275,6 +275,36 @@ public class Main {
 		System.out.println("!!!!!!!!!");
 	}
 
+
+	public void filmesExibicao() {
+		String hora_um = getHoraValidated("primeiro horário");
+
+		String hora_dois = getHoraValidated("primeiro horário");
+
+		int minutos_um = (parseInt(hora_um.substring(0, 2)) * 60) + parseInt(hora_um.substring(3, 5));
+		
+		int minutos_dois = (parseInt(hora_dois.substring(0, 2)) * 60) + parseInt(hora_dois.substring(3, 5));
+		
+
+		for (Filme f : this.cinema.getFilmes())
+		{
+			boolean exibido = false;
+			for (Horario h : f.getHorarios())
+			{	
+				int h_min_geral = (h.getHora()* 60) + h.getMinutos();
+				if (minutos_um < h_min_geral && h_min_geral < minutos_dois)
+				{
+					exibido = true;
+				}
+			}
+
+			if (exibido == true)
+			{
+				System.out.println(f.listarDetalhes());
+			}
+		}
+	}
+
 	public void altObj(String filme,String var,String tipo) throws GeneroNaoEncontradaException, PessoaNaoEncontradaException {
 		try {
 			if(this.cinema.MudarFilme(filme ,var, tipo)) {
@@ -392,14 +422,12 @@ public class Main {
 		}catch (HorarioNaoEncontradaException e) {
 			System.out.println(e.getMessage());
 		}
-		Date data = getDateValidated("Data");
-		int sala = getIntValidated("Nº da sala");
-		System.out.println("Horário: ");
-		String op_horario = cmd.nextLine();
 		
+		int codigo = getIntValidated("código do horário desejado");
+
 		Horario hor_obj = new Horario();
 		try {
-			hor_obj = this.cinema.getHorario(data, sala, op_horario);
+			hor_obj = this.cinema.getHorario(codigo);
 		}catch (HorarioNaoEncontradaException e) {
 			System.out.println(e.getMessage());
 		}
@@ -555,6 +583,43 @@ public class Main {
 	}
 
 
+	public String getHoraValidated(String getMsg)
+	{
+		boolean horaTrue = false;
+		String hora = "";
+		do {
+			try {
+				System.out.println("Digite a "+ getMsg +" (hh:mm): ");
+				hora = cmd.nextLine();
+
+				if (!hora.matches("\\d\\d:\\d\\d")) {
+					horaTrue = false;
+					throw new Exception();
+				}
+
+				if (parseInt(hora.substring(0, 2)) > 24)
+				{
+					horaTrue = false;
+					throw new Exception();
+				}
+
+				if (parseInt(hora.substring(3, 5)) > 60)
+				{
+					horaTrue = false;
+					throw new Exception();
+				}
+
+				horaTrue = true;
+				
+			}
+			catch (Exception e) {
+				typeError("Hora em formato inválido!");
+				horaTrue = false;
+			}
+		} while (horaTrue == false);
+
+		return hora;
+	}
 
 	public Date getDateValidated(String getMsg)
 	{	
@@ -697,20 +762,15 @@ public class Main {
 
 		// GET HORÁRIOS ===================================================================
 		List<Horario> horarios_select = null;
-		String strHorarios = listarHorarios();
 		horarios_select = new ArrayList<Horario>();
 		try {
 			do {
 				System.out.println("Adicionar Horário: ");
 				System.out.println(this.cinema.listarHorarios());
-				Date data = getDateValidated("Data");
-				int sala = getIntValidated("Nº da sala");
-				System.out.println("Horário: ");
-				String op_horario = cmd.nextLine();
-			
+				int codigo = getIntValidated("código do horário desejado");
 				Horario horario;
 				try {
-					horario = this.cinema.getHorario(data, sala, op_horario);
+					horario = this.cinema.getHorario(codigo);
 					horarios_select.add(horario);
 				} catch (HorarioNaoEncontradaException e) {
 					System.out.println(e.getMessage());
@@ -866,15 +926,10 @@ public class Main {
 						if(op == 1) {
 							try {
 								System.out.println(this.cinema.listarHorarios());
-								Date data_h = getDateValidated("Data");
-								System.out.println("N° Sala: ");
-								int sala = cmd.nextInt();	
-								cmd.nextLine();
-								System.out.println("Horário: ");
-								String op_horario = cmd.nextLine();
+								int codigo = getIntValidated("código do horário desejado");
 								tipo = "Horário";
 								
-								if(this.cinema.MudarHor(op_filme,tipo, data_h, sala, op_horario, "addhor")) {
+								if(this.cinema.MudarHor(op_filme,tipo, codigo, "addhor")) {
 									System.out.println(tipo + " modificado.");
 								}
 								else {
@@ -891,15 +946,10 @@ public class Main {
 							}catch (HorarioNaoEncontradaException e) {
 								System.out.println(e.getMessage());
 							}
-							Date data_h = getDateValidated("Data");
-							System.out.println("N° Sala: ");
-							int sala = cmd.nextInt();	
-							cmd.nextLine();
-							System.out.println("Horário: ");
-							String op_horario = cmd.nextLine();
+							int codigo = getIntValidated("código do horário desejado");
 							tipo = "Horário";
 							
-							if(this.cinema.MudarHor(op_filme,tipo, data_h, sala, op_horario, "remhor")) {
+							if(this.cinema.MudarHor(op_filme,tipo, codigo, "remhor")) {
 								System.out.println(tipo + " modificado.");
 							}
 							else {
@@ -1415,8 +1465,7 @@ public class Main {
 					num = cmd.nextInt();
 					cmd.nextLine();
 					Date data = getDateValidated("data da sessão");
-					System.out.println("Informe o horário da sessão: ");
-					hora = cmd.nextLine();
+					hora = getHoraValidated("horário da sessão");
 					Sala sala =  new Sala();
 					sala = this.cinema.getSala(num);
 					this.cinema.setHorario(data, sala , hora);
@@ -1451,11 +1500,9 @@ public class Main {
 			do {
 				System.out.println("Qual horário você deseja modificar?");
 				System.out.println(this.cinema.listarHorarios());
-				Date data = getDateValidated("Data");
-				int sala = getIntValidated("Nº da sala");
-				System.out.println("Horário: ");
-				String op_horario = cmd.nextLine();
-				System.out.println(this.cinema.getHorario(data, sala, op_horario).listarDetalhes());
+				int codigo = getIntValidated("código do horário desejado");
+				Horario hor_obj = this.cinema.getHorario(codigo);
+				System.out.println(hor_obj.listarDetalhes());
 				System.out.println("O que você deseja modificar: ");
 				System.out.println("1-Data\n2-Sala\n3-Hora\n4-Cancelar");
 				op_mod = cmd.nextInt();
@@ -1463,22 +1510,18 @@ public class Main {
 				switch (op_mod) {
 				case 1:
 					Date data_nova = getDateValidated("Nova data");
-					this.cinema.altHorario(data, sala, op_horario,	data_nova);
-					data = data_nova;
+					hor_obj.setData(data_nova);
 					break;
 				case 2:
 					System.out.println(this.cinema.listarSalas());
 					System.out.println("Novo N° Sala: ");
 					int sala_nova = cmd.nextInt();	
 					cmd.nextLine();
-					this.cinema.altHorario(data, sala, op_horario, this.cinema.getSala(sala_nova));
-					sala = sala_nova;
+					hor_obj.setSala(this.cinema.getSala(sala_nova));  
 					break;
 				case 3:
-					System.out.println("Novo Horário: ");
-					String novo_op_horario = cmd.nextLine();
-					this.cinema.altHorario(data, sala, op_horario, novo_op_horario);
-					op_horario = novo_op_horario;
+					String novo_op_horario = getHoraValidated("novo horário");
+					hor_obj.setHorario(novo_op_horario);  
 					break;
 				case 4:
 					break;
@@ -1503,16 +1546,14 @@ public class Main {
 			do {
 				System.out.println("Qual horário você deseja excluir?");
 				System.out.println(this.cinema.listarHorarios());
-				Date data = getDateValidated("Data");
-				int sala = getIntValidated("Nº da sala");
-				System.out.println("Horário: ");
-				String op_horario = cmd.nextLine();
-				System.out.println(this.cinema.getHorario(data, sala, op_horario).listarDetalhes());
+				int codigo = getIntValidated("código do horário desejado");
+				Horario hor_obj = this.cinema.getHorario(codigo);
+				System.out.println(hor_obj.listarDetalhes());
 				System.out.println("Você tem certeza que quer excluir esse gênero? 1-Sim/0-Não");
 				op_s = cmd.nextInt();
 				cmd.nextLine();
 				if(op_s == 1 ) {
-					this.cinema.deleteHorario(data, sala, op_horario);
+					this.cinema.deleteHorario(hor_obj);
 				}
 				else {
 					opcao = "Horário não excluído";
